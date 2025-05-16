@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jade Golondrina | Resume</title>
+  <style>
+    :root {
+      --bg-color: #1e1e50;
+      --text-color: #fff;
+      --card-bg: #2a2a70;
+      --nav-bg: #2c2c70;
+      --btn-bg: #3a3aad;
+      --hover-bg: #5757d1;
+      --header-bg: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1950&q=80');
+      --header-bg-light: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1950&q=80');
+    }
+
+    body.light-mode {
+      --bg-color: #f0f0f0;
+      --text-color: #000;
+      --card-bg: #ffffff;
+      --nav-bg: #ccccff;
+      --btn-bg: #6a6aff;
+      --hover-bg: #4d4dff;
+      --header-bg: var(--header-bg-light);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.5s, color 0.5s;
+    }
+    header {
+      background: var(--header-bg) no-repeat center center/cover;
+      text-align: center;
+      padding: 40px 20px 30px;
+      position: relative;
+      transition: background-image 0.6s ease-in-out;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 50, 0.6);
+      z-index: 1;
+    }
+    header img, header .name-box {
+      position: relative;
+      z-index: 2;
+    }
+    header img {
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border: 4px solid #fff;
+      margin-bottom: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .name-box {
+      display: inline-block;
+      background-color: #2f2f7f;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .name-box h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: var(--nav-bg);
+      padding: 10px;
+    }
+    nav button {
+      background: var(--btn-bg);
+      color: white;
+      padding: 10px 15px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    nav button:hover {
+      background-color: var(--hover-bg);
+    }
+    #theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--btn-bg);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+    }
+    section {
+      display: none;
+      padding: 30px;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      background-color: var(--card-bg);
+      margin: 40px auto;
+      max-width: 800px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    section.active {
+      display: block;
+      opacity: 1;
+      transform: scale(1);
+    }
+    form input, form textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    form button {
+      background: var(--btn-bg);
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
+    a {
+      color: #85b5ff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle">🌙</button>
+  <header>
+    <img src="https://imgur.com/Yj2I98s.jpg" alt="Profile Picture" loading="lazy">
+    <div class="name-box">
+      <h1>Jade Golondrina</h1>
+    </div>
+  </header>
+
+  <nav>
+    <button onclick="showSection('about')">About Me</button>
+    <button onclick="showSection('skills')">Skills</button>
+    <button onclick="showSection('dream')">My Dream Job</button>
+    <button onclick="showSection('contact')">Contact</button>
+  </nav>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p>I am Jade Golondrina, a Computer Engineer with a passion for solving problems and building systems. I also love basketball, which keeps me energized and focused. I am continuously learning and pushing the boundaries of my skills to grow as an engineer and a person.</p>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <h4>Technical Skills</h4>
+    <ul>
+      <li>Computer Programming</li>
+      <li>Debugging</li>
+      <li>Object-Oriented Design</li>
+      <li>Troubleshooting</li>
+      <li>Circuit Design</li>
+      <li>AutoCAD</li>
+    </ul>
+    <h4>Programming Languages</h4>
+    <ul>
+      <li>C</li>
+      <li>C++</li>
+      <li>Python</li>
+      <li>HTML</li>
+      <li>JavaScript</li>
+    </ul>
+  </section>
+
+  <section id="dream">
+    <h2>My Dream Job</h2>
+    <p>I aspire to become a Cybersecurity professional working at a famous international company. I want to be at the forefront of protecting systems and data while constantly adapting to the fast-evolving tech world.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <p>Email: <a href="mailto:golondrinajade@gmail.com">golondrinajade@gmail.com</a></p>
+    <p>Phone: 09237554736</p>
+    <form>
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Your Email" required>
+      <textarea placeholder="Your Message" rows="5" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
+      });
+
+      const target = document.getElementById(id);
+      setTimeout(() => {
+        target.classList.add('active');
+      }, 100);
+    }
+
+    const toggleButton = document.getElementById('theme-toggle');
+    toggleButton.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      toggleButton.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+    });
+  </script>
+</body>
+</html>
