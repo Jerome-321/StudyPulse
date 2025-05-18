@@ -41,17 +41,21 @@ if (!isset($_SESSION['user_id'])) {
                 <h3>Settings</h3>
             </a>
             <div class="logout-btn">
-        <a href="logout.php"><i class="uil uil-signout"></i> Logout</a>
+                <a href="logout.php" id="logout-link">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+            <div id="profile-btn">
+                <span class="material-icons-sharp">person</span>
+            </div>
+            <div class="theme-toggler">
+                <span class="material-icons-sharp active">light_mode</span>
+                <span class="material-icons-sharp">dark_mode</span>
+            </div>
         </div>
-        <div id="profile-btn">
-            <span class="material-icons-sharp">person</span>
-        </div>
-        <div class="theme-toggler">
-            <span class="material-icons-sharp active">light_mode</span>
-            <span class="material-icons-sharp">dark_mode</span>
-        </div>
-        
     </header>
+
     <div class="container">
         <aside>
             <div class="profile">
@@ -82,7 +86,7 @@ if (!isset($_SESSION['user_id'])) {
         <main>
             <h1>Grades</h1>
             <div class="subjects" id="dynamic-grades">
-                
+                <!-- Dynamic content will be inserted here by JavaScript -->
             </div>
 
             <div class="timetable" id="timetable">
@@ -104,14 +108,12 @@ if (!isset($_SESSION['user_id'])) {
                     <tbody></tbody>
                 </table>
                 <div id="Subjects" class="subjects"></div>
-
-                 
-            </main>
+            </div>
+        </main>
 
         <div class="right">
             <div class="calendar">
                 <h2 class="calendar-date">May 1, 2025</h2>
-            
                 <div class="calendar-entry">
                     <div class="date-icon">📅</div>
                     <div class="details">
@@ -119,53 +121,52 @@ if (!isset($_SESSION['user_id'])) {
                         <small class="text-muted">Public Holiday</small>
                     </div>
                 </div>
-            
-            
-
+            </div>
         </div>
     </div>
 
     <script src="timeTable.js"></script>
     <script src="app.js"></script>
     <script>
-    window.onload = loadSubjects;
-    </script>
-    <script>
     window.onload = function() {
-    let courses = JSON.parse(localStorage.getItem("courses")) || [];
-    let container = document.getElementById("dynamic-grades");
+        loadSubjects();
+        
+        let courses = JSON.parse(localStorage.getItem("courses")) || [];
+        let container = document.getElementById("dynamic-grades");
 
-    courses.forEach(course => {
-        let div = document.createElement("div");
-        div.className = "grade-card";
-        div.innerHTML = `
-            <h3><span class="material-icons-sharp">school</span>
-            ${course.name}</h3>
-            <p>${course.prelim} / ${course.midterm} / ${course.final}</p>
-            <div class="progress" style="--percentage:${course.percentage}">
-                <svg><circle cx="38" cy="38" r="36"></circle></svg>
-                <div class="number"><p>${course.percentage}%</p></div>
-            </div>
-            <small>Updated</small>
-        `;
-        container.appendChild(div);
+        courses.forEach(course => {
+            let div = document.createElement("div");
+            div.className = "grade-card";
+            div.innerHTML = `
+                <h3><span class="material-icons-sharp">school</span>
+                ${course.name}</h3>
+                <p>${course.prelim} / ${course.midterm} / ${course.final}</p>
+                <div class="progress" style="--percentage:${course.percentage}">
+                    <svg><circle cx="38" cy="38" r="36"></circle></svg>
+                    <div class="number"><p>${course.percentage}%</p></div>
+                </div>
+                <small>Updated</small>
+            `;
+            container.appendChild(div);
+        });
+
+        // Set user profile data
+        const firstName = localStorage.getItem('user_firstname') || 'First';
+        const lastName = localStorage.getItem('user_lastname') || 'Last';
+        const email = localStorage.getItem('user_email') || 'unknown@gmail.com';
+
+        document.querySelector('.profile .info p').textContent = `${firstName} ${lastName}`;
+        const aboutSection = document.querySelector('.profile .about');
+        const allParagraphs = aboutSection.querySelectorAll('p');
+        allParagraphs[3].textContent = email;
+    };
+
+    // Optional: Add confirmation dialog for logout
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+        if(!confirm('Are you sure you want to logout?')) {
+            e.preventDefault();
+        }
     });
-};
-</script>
-<script>
-  const firstName = localStorage.getItem('user_firstname') || 'First';
-  const lastName = localStorage.getItem('user_lastname') || 'Last';
-  const email = localStorage.getItem('user_email') || 'unknown@gmail.com';
-
-  // Set profile name
-  document.querySelector('.profile .info p').textContent = `${firstName} ${lastName}`;
-
-  // Set profile email (ensure it's the correct <p> tag in your .about section)
-  const aboutSection = document.querySelector('.profile .about');
-  const allParagraphs = aboutSection.querySelectorAll('p');
-  allParagraphs[3].textContent = email; // 4th <p> under "about" section is email
-</script>
-
-<script>src="script2.js"</script>
+    </script>
 </body>
 </html>
