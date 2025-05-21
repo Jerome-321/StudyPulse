@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>Login & Register Page</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
@@ -29,7 +27,7 @@
         .container {
             background-color: #fff;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
             width: 768px;
@@ -137,38 +135,15 @@
         }
 
         @keyframes move {
-            0%,
-            49.99% {
+            0%, 49.99% {
                 opacity: 0;
                 z-index: 1;
             }
 
-            50%,
-            100% {
+            50%, 100% {
                 opacity: 1;
                 z-index: 5;
             }
-        }
-
-        .social-icons {
-            margin: 20px 0;
-        }
-
-        .social-icons a {
-            border: 1px solid #ccc;
-            border-radius: 20%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 3px;
-            width: 40px;
-            height: 40px;
-            transition: background-color 0.3s;
-        }
-
-        .social-icons a:hover {
-            background-color: #4f46e5;
-            color: white;
         }
 
         .toggle-container {
@@ -185,7 +160,6 @@
 
         .container.active .toggle-container {
             transform: translateX(-100%);
-            border-radius: 20px;
         }
 
         .toggle {
@@ -214,7 +188,6 @@
             padding: 0 30px;
             text-align: center;
             top: 0;
-            transform: translateX(0);
             transition: all 0.6s ease-in-out;
         }
 
@@ -236,6 +209,7 @@
 <body>
 
     <div class="container" id="container">
+        <!-- Sign Up Form -->
         <div class="form-container sign-up">
             <form action="register.php" method="POST">
                 <h1>Create Account</h1>
@@ -249,23 +223,19 @@
             </form>
         </div>
 
+        <!-- Sign In Form -->
         <div class="form-container sign-in">
             <form action="login.php" method="POST">
                 <h1>Sign In</h1>
-                <div class="social-icons">
-                    <a href="#" class="icons"><i class='bx bxl-google'></i></a>
-                    <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
-                    <a href="#" class="icons"><i class='bx bxl-github'></i></a>
-                    <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a>
-                </div>
                 <span>Login With Email & Password</span>
                 <input type="email" name="email" placeholder="Enter E-mail" required>
                 <input type="password" name="password" placeholder="Enter Password" required>
                 <a href="#">Forget Password?</a>
-                <button type="submit"><i class="uil uil-signin"></i> Sign In</button>
+                <button type="submit">Sign In</button>
             </form>
         </div>
 
+        <!-- Toggle Panels -->
         <div class="toggle-container">
             <div class="toggle">
                 <div class="toggle-panel toggle-left">
@@ -280,8 +250,21 @@
                 </div>
             </div>
         </div>
+    </div>
 
-    <script src="script2.js"></script>
+    <script>
+        const container = document.getElementById('container');
+        const registerBtn = document.getElementById('register');
+        const loginBtn = document.getElementById('login');
+
+        registerBtn.addEventListener('click', () => {
+            container.classList.add("active");
+        });
+
+        loginBtn.addEventListener('click', () => {
+            container.classList.remove("active");
+        });
+    </script>
 
 </body>
 
