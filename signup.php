@@ -1,33 +1,32 @@
 <?php
-include('db.php');
+require 'db.php'; // includes your DB connection
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get input data from the form
-    $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-    $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
-    
-    // Check if email or username already exists
-    $checkQuery = "SELECT * FROM users WHERE email = '$email' OR username = '$username'";
-    $checkResult = mysqli_query($conn, $checkQuery);
-    
-    if (mysqli_num_rows($checkResult) > 0) {
-        echo "Email or username already exists.";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $fname = trim($_POST["first_name"]);
+    $lname = trim($_POST["last_name"]);
+    $email = trim($_POST["email"]);
+    $username = trim($_POST["username"]);
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+
+    // Check for existing email or username
+    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? OR username = ?");
+    $stmt->bind_param("ss", $email, $username);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        echo "Email or Username already exists.";
     } else {
-        // Hash password
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        // Insert new user into the database
-        $insertQuery = "INSERT INTO users (first_name, last_name, email, username, password) 
-                        VALUES ('$first_name', '$last_name', '$email', '$username', '$hashed_password')";
-        
-        if (mysqli_query($conn, $insertQuery)) {
-            echo "Registration successful!";
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, username, password) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $fname, $lname, $email, $username, $password);
+        if ($stmt->execute()) {
+            echo "Registration successful! <a href='login.html'>Login here</a>";
         } else {
-            echo "Error: " . $insertQuery . "<br>" . mysqli_error($conn);
+            echo "Error: " . $conn->error;
         }
     }
+
+    $stmt->close();
 }
+$conn->close();
 ?>
