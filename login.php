@@ -1,12 +1,11 @@
 <?php
 session_start();
-include('db.php');
+require 'db.php'; // use the db connection
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = trim($_POST["email"]);
+    $password = $_POST["password"];
 
-    // Check if the email exists
     $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
@@ -17,21 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->fetch();
 
         if (password_verify($password, $hashed_password)) {
-            // Password is correct — start session
-            $_SESSION['user_id'] = $id;
-            $_SESSION['username'] = $username;
-
-            echo "Login successful!";
-            // Optionally redirect to dashboard
-            // header("Location: dashboard.php");
+            $_SESSION["user_id"] = $id;
+            $_SESSION["username"] = $username;
+            header("Location: dashboard.php"); // redirect to dashboard
+            exit();
         } else {
-            echo "Invalid password.";
+            echo "Incorrect password.";
         }
     } else {
         echo "No account found with that email.";
     }
 
     $stmt->close();
-    $conn->close();
 }
+$conn->close();
 ?>
