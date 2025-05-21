@@ -1,32 +1,37 @@
 <?php
-require 'db.php'; // includes your DB connection
+// Database configuration
+define('DB_HOST', 'localhost');
+define('DB_USER', 'your_username');
+define('DB_PASS', 'your_password');
+define('DB_NAME', 'your_database');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fname = trim($_POST["first_name"]);
-    $lname = trim($_POST["last_name"]);
-    $email = trim($_POST["email"]);
-    $username = trim($_POST["username"]);
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-
-    // Check for existing email or username
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? OR username = ?");
-    $stmt->bind_param("ss", $email, $username);
-    $stmt->execute();
-    $stmt->store_result();
-
-    if ($stmt->num_rows > 0) {
-        echo "Email or Username already exists.";
-    } else {
-        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, username, password) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $fname, $lname, $email, $username, $password);
-        if ($stmt->execute()) {
-            echo "Registration successful! <a href='login.html'>Login here</a>";
-        } else {
-            echo "Error: " . $conn->error;
-        }
+// Create connection with error handling
+try {
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    
+    // Check connection
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
     }
-
-    $stmt->close();
+    
+    // Set charset to utf8mb4 for full Unicode support
+    $conn->set_charset("utf8mb4");
+    
+} catch (Exception $e) {
+    // Log error (in production, log to file instead of outputting)
+    error_log($e->getMessage());
+    
+    // Show user-friendly message
+    die("We're experiencing technical difficulties. Please try again later.");
 }
-$conn->close();
-?>
+
+// Function to close connection (optional)
+function close_db() {
+    global $conn;
+    if (isset($conn)) {
+        $conn->close();
+    }
+}
+
+// Register shutdown function to ensure connection closes
+register_shutdown_function('close_db');
