@@ -1,33 +1,36 @@
 <?php
 session_start();
-require 'db.php'; // use the db connection
+include('db.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST["email"]);
-    $password = $_POST["password"];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
+    // Prepare statement to get user info by email
+    $query = "SELECT id, username, password FROM users WHERE email = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_store_result($stmt);
 
-    if ($stmt->num_rows === 1) {
-        $stmt->bind_result($id, $username, $hashed_password);
-        $stmt->fetch();
+    if (mysqli_stmt_num_rows($stmt) === 1) {
+        mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password);
+        mysqli_stmt_fetch($stmt);
 
+        // Verify hashed password
         if (password_verify($password, $hashed_password)) {
-            $_SESSION["user_id"] = $id;
-            $_SESSION["username"] = $username;
-            header("Location: dashboard.php"); // redirect to dashboard
+            $_SESSION['user_id'] = $id;
+            $_SESSION['username'] = $username;
+            header("Location: dashboard.php");
             exit();
         } else {
-            echo "Incorrect password.";
+            echo "Invalid password.";
         }
     } else {
-        echo "No account found with that email.";
+        echo "No user found with this email.";
     }
 
-    $stmt->close();
+    mysqli_stmt_close($stmt);
 }
-$conn->close();
+mysqli_close($conn);
 ?>
