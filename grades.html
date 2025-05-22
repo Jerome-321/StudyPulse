@@ -475,6 +475,42 @@ input:focus {
         displaySavedCourses();
         alert("Courses updated successfully!");
     }
+         window.onload = displaySavedCourses;
+    function saveCourses() {
+    let courses = [];
+        document.querySelectorAll(".course-entry").forEach(entry => {
+            let inputs = entry.getElementsByTagName("input");
+            let prelim = parseFloat(inputs[1].value) || 0;
+            let midterm = parseFloat(inputs[2].value) || 0;
+            let final = parseFloat(inputs[3].value) || 0;
+            let percentage = Math.round((prelim + midterm + final) / 3);
+        
+            let course = {
+            name: inputs[0].value,
+            prelim,
+            midterm,
+            final,
+            percentage
+        };
+        courses.push(course);
+    });
+        localStorage.setItem("courses", JSON.stringify(courses));
+        displaySavedCourses();
+        alert("Courses saved successfully!");
+}
+let percentage = Math.round((prelim + midterm + final) / 3);
+let courses = JSON.parse(localStorage.getItem("courses")) || [];
+
+courses.push({
+    name: courseName,
+    prelim: prelim,
+    midterm: midterm,
+    final: final,
+    percentage: percentage
+});
+
+localStorage.setItem("courses", JSON.stringify(courses));
+
 
     // Display saved courses on page load
     window.onload = displaySavedCourses;
