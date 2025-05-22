@@ -287,12 +287,15 @@
       container.classList.remove('active');
     });
     async function safeParseJSON(response) {
-      const text = await response.text();
-      try {
-        return JSON.parse(text);
-      } catch {
-        return { error: 'Invalid JSON response', raw: text };
-      }
+  const text = await response.text();
+  console.log('Raw response text:', text);  
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { error: 'Invalid JSON response', raw: text };
+  }
+}
+
     }
     signupForm.addEventListener('submit', async e => {
       e.preventDefault();
