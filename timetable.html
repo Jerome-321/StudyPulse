@@ -309,5 +309,51 @@
     <!-- Your existing scripts -->
     <script src="timeTable.js"></script>
     <script src="app.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('customTimetableForm');
+    const tbody = document.querySelector('#timetable tbody');
+
+    // Load existing custom timetable from localStorage
+    let customTimetable = JSON.parse(localStorage.getItem('customTimetable') || '[]');
+    renderTimetable();
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const time = document.getElementById('inputTime').value;
+        const room = document.getElementById('inputRoom').value;
+        const course = document.getElementById('inputCourse').value;
+        const type = document.getElementById('inputType').value;
+
+        customTimetable.push({ time, room, course, type });
+        localStorage.setItem('customTimetable', JSON.stringify(customTimetable));
+        renderTimetable();
+        form.reset();
+    });
+
+    function renderTimetable() {
+        tbody.innerHTML = '';
+        customTimetable.forEach((entry, idx) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${entry.time}</td>
+                <td>${entry.room}</td>
+                <td>${entry.course}</td>
+                <td>${entry.type}</td>
+                <td><button onclick="removeEntry(${idx})" style="color:red; border:none; background:none; cursor:pointer;">Remove</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Make removeEntry global
+    window.removeEntry = function(idx) {
+        customTimetable.splice(idx, 1);
+        localStorage.setItem('customTimetable', JSON.stringify(customTimetable));
+        renderTimetable();
+    }
+});
+</script>
 </body>
 </html>
