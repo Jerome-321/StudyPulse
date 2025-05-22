@@ -14,39 +14,36 @@ const requestHandler = async (req, res) => {
   }
 };
 
-http.createServer(requestHandler).listen(3000, () => {
-  console.log('✅ Server running at http://localhost:3000');
-});
 const express = require('express');
 const cors = require('cors');
 const app = express();
 
-app.use(cors()); // Allow all origins — adjust for production
+app.use(cors()); // Allow cross-origin requests from your frontend
 app.use(express.json()); // Parse JSON bodies
 
-// Simple in-memory user store (for demo only)
+// Simple in-memory user store (demo only)
 const users = [];
 
-// Signup route
+// Signup endpoint
 app.post('/signup', (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-
+  
   if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
+    return res.status(400).json({ message: 'Email and password required' });
   }
 
-  // Check if user already exists
+  // Check for existing user
   if (users.find(u => u.email === email)) {
     return res.status(409).json({ message: 'User already exists' });
   }
 
   // Save user
   users.push({ firstName, lastName, email, password });
-  console.log('New user registered:', email);
+  console.log('Registered user:', email);
   res.json({ message: 'User registered successfully' });
 });
 
-// Login route
+// Login endpoint
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -62,4 +59,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
