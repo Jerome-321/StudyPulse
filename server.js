@@ -1,4 +1,4 @@
-// server.js
+// src/server.js
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -35,7 +35,6 @@ const upload = multer({ storage });
 
 // Dummy auth middleware (replace with real JWT or session)
 const authMiddleware = (req, res, next) => {
-  // For example, you might extract userId from a token in headers
   req.userId = 1; // mock userId for now
   next();
 };
@@ -46,8 +45,6 @@ app.use("/api/auth", authRoutes);
 
 // === PROFILE ROUTES ===
 import profileRoutes from "./routes/profile.js";
-// Inject multer upload and db in profile routes
-// We'll create a small router wrapper here to handle upload inside profile routes
 import { Router } from "express";
 const profileRouter = Router();
 
@@ -93,7 +90,7 @@ app.use("/api/timetable", authMiddleware, timetableRoutes);
 
 // === LOGOUT ROUTE ===
 app.post("/api/logout", authMiddleware, (req, res) => {
-  // If you use cookies or JWT, clear token here
+  // Clear token or session here if applicable
   res.clearCookie("token");
   res.json({ message: "Logged out successfully" });
 });
