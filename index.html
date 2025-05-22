@@ -2,272 +2,282 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>STUDYPULSE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Fonts and icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-  <link href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Register Page</title>
   <style>
-    :root {
-      --bg: linear-gradient(145deg, #f5f6fa, #eef1f7);
-      --card: #ffffff;
-      --shadow-light: rgba(255, 255, 255, 0.8);
-      --shadow-dark: rgba(0, 0, 0, 0.05);
-      --primary: #4f46e5;
-      --text: #2f2f2f;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      scroll-behavior: smooth;
+      font-family: 'Montserrat', sans-serif;
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
+      background-color: whitesmoke;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
     }
 
-    nav {
-      position: fixed;
+    .container {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      width: 768px;
+      max-width: 100%;
+      min-height: 480px;
+    }
+
+    .form-container {
+      position: absolute;
       top: 0;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px var(--shadow-dark);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      z-index: 100;
-    }
-
-    .nav-logo {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--primary);
-      cursor: default;
-    }
-
-    .nav-menu {
-      list-style: none;
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    .nav-menu li a {
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: color 0.2s ease;
-    }
-
-    .nav-menu li a:hover {
-      color: var(--primary);
-    }
-
-    section {
-      padding: 100px 20px 60px;
-      min-height: 100vh;
+      height: 100%;
+      transition: all 0.6s ease-in-out;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      text-align: center;
-      max-width: 900px;
-      margin: auto;
+      width: 50%;
+      padding: 0 40px;
     }
 
-    .section-title {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-    }
-
-    .section-desc {
-      font-size: 1rem;
-      color: #555;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* Portfolio Section */
-    #contact .swiper {
+    .form-container form {
       width: 100%;
-      padding-top: 2rem;
-      padding-bottom: 4rem;
-      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
     }
 
-    .swiper-slide {
-      background: var(--card);
-      border-radius: 1.5rem;
-      box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
+    .form-container input {
+      background-color: #eee;
+      border: none;
+      margin: 8px 0;
+      padding: 10px 15px;
+      font-size: 13px;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    .form-container button {
+      background-color: #4f46e5;
+      color: #fff;
+      font-size: 12px;
+      padding: 10px 45px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 10px;
       cursor: pointer;
+    }
+
+    .sign-in {
+      left: 0;
+      z-index: 2;
+    }
+
+    .sign-up {
+      left: 0;
+      z-index: 1;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .container.active .sign-in {
+      transform: translateX(100%);
+    }
+
+    .container.active .sign-up {
+      transform: translateX(100%);
+      z-index: 5;
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .toggle-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
       overflow: hidden;
-      transition: transform 0.3s ease;
+      transition: all 0.6s ease-in-out;
+      z-index: 100;
+    }
+
+    .container.active .toggle-container {
+      transform: translateX(-100%);
+    }
+
+    .toggle {
+      background-color: #4f46e5;
+      height: 100%;
+      color: #fff;
+      position: relative;
+      left: -100%;
+      width: 200%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.6s ease-in-out;
+    }
+
+    .container.active .toggle {
+      transform: translateX(50%);
+    }
+
+    .toggle-panel {
+      position: absolute;
+      width: 50%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1rem;
+      justify-content: center;
+      text-align: center;
+      padding: 0 30px;
     }
 
-    .swiper-slide:hover {
-      transform: translateY(-10px);
-      box-shadow: 12px 12px 30px var(--shadow-dark), -12px -12px 30px var(--shadow-light);
+    .toggle-left {
+      transform: translateX(-200%);
     }
 
-    .swiper-slide img {
-      width: 100%;
-      max-height: 180px;
-      object-fit: cover;
-      border-radius: 1rem;
-      margin-bottom: 1rem;
+    .container.active .toggle-left {
+      transform: translateX(0);
     }
 
-    .swiper-slide h3 {
-      color: var(--primary);
-      font-size: 1.2rem;
-      margin-bottom: 0.3rem;
+    .toggle-right {
+      right: 0;
+      transform: translateX(0);
     }
 
-    .swiper-slide p {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 0;
-    }
-
-    /* Responsive nav menu on small screens */
-    @media (max-width: 768px) {
-      .nav-menu {
-        flex-direction: column;
-        gap: 1rem;
-        background: rgba(255, 255, 255, 0.9);
-        position: fixed;
-        right: 0;
-        top: 60px;
-        width: 200px;
-        padding: 1rem;
-        border-radius: 0 0 0 10px;
-        display: none;
-      }
-
-      nav.active .nav-menu {
-        display: flex;
-      }
-
-      .nav-toggle {
-        display: block;
-        cursor: pointer;
-        font-size: 1.8rem;
-        color: var(--primary);
-      }
+    .container a {
+      color: #4f46e5;
+      font-size: 12px;
+      text-decoration: none;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav>
-    <div class="nav-logo">StudyPulse</div>
-    <ul class="nav-menu" id="nav-menu">
-      <li><a href="#home"><i class="uil uil-home-alt"></i>Home</a></li>
-      <li><a href="#services"><i class="uil uil-briefcase"></i>Services</a></li>
-      <li><a href="#about"><i class="uil uil-user"></i>About</a></li>
-      <li><a href="#contact"><i class="uil uil-envelope"></i>Contact</a></li>
-      <li><a href="login.html"><i class="uil uil-signin"></i>Login</a></li>
-    </ul>
-  </nav>
+  <div class="container" id="container">
+    <!-- Sign Up -->
+    <div class="form-container sign-up">
+      <form id="signup-form" action="#">
+        <h1>Create Account</h1>
+        <input type="text" name="first_name" placeholder="First Name" required />
+        <input type="text" name="last_name" placeholder="Last Name" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
 
-  <!-- Sections -->
-  <section id="home">
-    <h2 class="section-title">Welcome to StudyPulse</h2>
-    <p class="section-desc">Your comprehensive student monitoring and performance tracking platform.</p>
-  </section>
+    <!-- Sign In -->
+    <div class="form-container sign-in">
+      <form id="login-form" action="#">
+        <h1>Sign In</h1>
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <a href="#">Forgot your password?</a>
+        <button type="submit">Sign In</button>
+      </form>
+    </div>
 
-  <section id="services">
-    <h2 class="section-title">Our Services</h2>
-    <p class="section-desc">We offer student performance monitoring, login portals, grade input interfaces, and much more.</p>
-  </section>
-
-  <section id="about">
-    <h2 class="section-title">About Us</h2>
-    <p class="section-desc">StudyPulse is dedicated to empowering students and educators with seamless tools to monitor and enhance academic performance.</p>
-  </section>
-
-  <section id="contact">
-    <h2 class="section-title">Contact</h2>
-    <p class="section-desc">Meet our developers</p>
-
-    <div class="swiper mySwiper">
-      <div class="swiper-wrapper">
-
-        <div class="swiper-slide" onclick="location.href='Natividad.html'">
-          <img src="https://assets.onecompiler.app/43fu3h58m/43fvu3j2k/received_9215996018417467.jpeg" alt="Jerome Natividad" />
-          <h3>Jerome Andrei N. Natividad</h3>
-          <p>Full-Stack Developer</p>
+    <!-- Toggle Panel -->
+    <div class="toggle-container">
+      <div class="toggle">
+        <div class="toggle-panel toggle-left">
+          <h1>Welcome Back!</h1>
+          <p>Sign in with your email and password</p>
+          <button class="hidden" id="login">Sign In</button>
         </div>
-
-        <div class="swiper-slide" onclick="location.href='Mendez.html'">
-          <img src="https://assets.onecompiler.app/43c8azdt9/43c8b2eqm/DSC_0001.JPG"Justine Mendez" />
-          <h3>Justine Carl N.</h3>
-          <p>UI/UX Designer</p>
+        <div class="toggle-panel toggle-right">
+          <h1>Hello, Friend!</h1>
+          <p>Register with your details to start</p>
+          <button class="hidden" id="register">Sign Up</button>
         </div>
-
-        <div class="swiper-slide" onclick="location.href='Buenafe.html'">
-          <img src="https://assets.onecompiler.app/43c8b2wna/43c8xtk5w/Screenshot%202025-03-19%20155028.jpg" alt="Emmanuel Tamy L. Buenafe" />
-          <h3>Emmanuel Tamy L. Buenafe</h3>
-          <p>Backend Engineer</p>
-        </div>
-
-        <div class="swiper-slide" onclick="location.href='Golondrina.html'">
-          <img src="https://imgur.com/Yj2I98s.jpg" alt="Jade Golondrina" />
-          <h3>Jade Golondrina</h3>
-          <p>Frontend Developer</p>
-        </div>
-
-        <div class="swiper-slide" onclick="location.href=''">
-          <img src="" alt="" />
-          <h3></h3>
-          <p></p>
-        </div>
-
       </div>
     </div>
-  </section>
-
-  <!-- Swiper JS -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  </div>
 
   <script>
-    const swiper = new Swiper('.mySwiper', {
-      slidesPerView: 1,
-      spaceBetween: 25,
-      loop: true,
-      centeredSlides: true,
-      grabCursor: true,
-      autoplay: {
-        delay: 3000,
-        disableOnInteraction: false,
-      },
-      breakpoints: {
-        640: {
-          slidesPerView: 2,
-        },
-        1024: {
-          slidesPerView: 3,
-        },
-      },
+    const container = document.getElementById('container');
+    const registerBtn = document.getElementById('register');
+    const loginBtn = document.getElementById('login');
+    const signupForm = document.getElementById('signup-form');
+    const loginForm = document.getElementById('login-form');
+    const backendUrl = 'https://studypulse-zyb9.onrender.com';
+
+    registerBtn.addEventListener('click', () => {
+      container.classList.add('active');
+    });
+
+    loginBtn.addEventListener('click', () => {
+      container.classList.remove('active');
+    });
+
+    signupForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const firstName = signupForm.querySelector('input[name="first_name"]').value;
+      const lastName = signupForm.querySelector('input[name="last_name"]').value;
+      const email = signupForm.querySelector('input[name="email"]').value;
+      const username = signupForm.querySelector('input[name="username"]').value;
+      const password = signupForm.querySelector('input[name="password"]').value;
+
+      try {
+        const response = await fetch(`${backendUrl}/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName, lastName, email, username, password }),
+        });
+
+        if (response.ok) {
+          alert('Registered successfully! Please login.');
+          signupForm.reset();
+          container.classList.remove('active');
+        } else {
+          const data = await response.json();
+          alert('Signup error: ' + data.message);
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
+    });
+
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const email = loginForm.querySelector('input[name="email"]').value;
+      const password = loginForm.querySelector('input[name="password"]').value;
+
+      try {
+        const response = await fetch(`${backendUrl}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          alert('Login successful! Redirecting...');
+          window.location.href = 'dashboard.html';
+        } else {
+          const data = await response.json();
+          alert('Login error: ' + data.message);
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
     });
   </script>
+
 </body>
 </html>
