@@ -210,30 +210,32 @@
 
     <div class="container" id="container">
         <!-- Sign Up Form -->
-        <div class="form-container sign-up">
-            <form action="register.php" method="POST">
-                <h1>Create Account</h1>
-                <span>Register with E-mail</span>
-                <input type="text" name="first_name" placeholder="First Name" required>
-                <input type="text" name="last_name" placeholder="Last Name" required>
-                <input type="email" name="email" placeholder="Enter E-mail" required>
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="password" placeholder="Enter Password" required>
-                <button type="submit">Sign Up</button>
-            </form>
-        </div>
+        <!-- Sign Up Form -->
+<div class="form-container sign-up">
+  <form id="signup-form" action="#" method="POST">  <!-- ✅ Added ID -->
+    <h1>Create Account</h1>
+    <span>Register with E-mail</span>
+    <input type="text" name="first_name" placeholder="First Name" required>
+    <input type="text" name="last_name" placeholder="Last Name" required>
+    <input type="email" name="email" placeholder="Enter E-mail" required>
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="password" name="password" placeholder="Enter Password" required>
+    <button type="submit">Sign Up</button>
+  </form>
+</div>
 
-        <!-- Sign In Form -->
-        <div class="form-container sign-in">
-            <form action="login.php" method="POST">
-                <h1>Sign In</h1>
-                <span>Login With Email & Password</span>
-                <input type="email" name="email" placeholder="Enter E-mail" required>
-                <input type="password" name="password" placeholder="Enter Password" required>
-                <a href="#">Forget Password?</a>
-                <button type="submit">Sign In</button>
-            </form>
-        </div>
+<!-- Sign In Form -->
+<div class="form-container sign-in">
+  <form id="login-form" action="#" method="POST">  <!-- ✅ Added ID -->
+    <h1>Sign In</h1>
+    <span>Login With Email & Password</span>
+    <input type="email" name="email" placeholder="Enter E-mail" required>
+    <input type="password" name="password" placeholder="Enter Password" required>
+    <a href="#">Forget Password?</a>
+    <button type="submit">Sign In</button>
+  </form>
+</div>
+
 
         <!-- Toggle Panels -->
         <div class="toggle-container">
