@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -9,8 +10,6 @@
   <link href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login & Register Page</title>
   <style>
     :root {
       --bg: linear-gradient(145deg, #f5f6fa, #eef1f7);
@@ -20,14 +19,12 @@
       --primary: #4f46e5;
       --text: #2f2f2f;
     }
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       scroll-behavior: smooth;
-      font-family: 'Montserrat', sans-serif;
     }
 
     body {
@@ -44,15 +41,11 @@
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(12px);
       box-shadow: 0 4px 20px var(--shadow-dark);
-      background-color: whitesmoke;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
       z-index: 100;
-      justify-content: center;
-      flex-direction: column;
-      height: 100vh;
     }
 
     .nav-logo {
@@ -60,56 +53,26 @@
       font-weight: 600;
       color: var(--primary);
       cursor: default;
-    .container {
-      background-color: #fff;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      position: relative;
-      overflow: hidden;
-      width: 768px;
-      max-width: 100%;
-      min-height: 480px;
     }
 
     .nav-menu {
       list-style: none;
-    .form-container {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      transition: all 0.6s ease-in-out;
       display: flex;
       gap: 1.5rem;
-      justify-content: center;
-      align-items: center;
-      width: 50%;
-      padding: 0 40px;
     }
 
     .nav-menu li a {
       text-decoration: none;
       color: var(--text);
       font-weight: 500;
-    .form-container form {
-      width: 100%;
       display: flex;
       align-items: center;
       gap: 0.3rem;
       transition: color 0.2s ease;
-      flex-direction: column;
-      background-color: white;
     }
 
     .nav-menu li a:hover {
       color: var(--primary);
-    .form-container input {
-      background-color: #eee;
-      border: none;
-      margin: 8px 0;
-      padding: 10px 15px;
-      font-size: 13px;
-      border-radius: 8px;
-      width: 100%;
     }
 
     section {
@@ -122,26 +85,12 @@
       text-align: center;
       max-width: 900px;
       margin: auto;
-    .form-container button {
-      background-color: #4f46e5;
-      color: #fff;
-      font-size: 12px;
-      padding: 10px 45px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-top: 10px;
-      cursor: pointer;
     }
 
     .section-title {
       font-size: 2.5rem;
       margin-bottom: 1rem;
       color: var(--primary);
-    .sign-in {
-      left: 0;
-      z-index: 2;
     }
 
     .section-desc {
@@ -149,11 +98,6 @@
       color: #555;
       max-width: 600px;
       margin: 0 auto;
-    .sign-up {
-      left: 0;
-      z-index: 1;
-      opacity: 0;
-      pointer-events: none;
     }
 
     /* Portfolio Section */
@@ -162,8 +106,6 @@
       padding-top: 2rem;
       padding-bottom: 4rem;
       max-width: 1200px;
-    .container.active .sign-in {
-      transform: translateX(100%);
     }
 
     .swiper-slide {
@@ -171,49 +113,17 @@
       border-radius: 1.5rem;
       box-shadow: 8px 8px 20px var(--shadow-dark), -8px -8px 20px var(--shadow-light);
       cursor: pointer;
-    .container.active .sign-up {
-      transform: translateX(100%);
-      z-index: 5;
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .toggle-container {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 50%;
-      height: 100%;
       overflow: hidden;
       transition: transform 0.3s ease;
-      transition: all 0.6s ease-in-out;
-      z-index: 100;
-    }
-
-    .container.active .toggle-container {
-      transform: translateX(-100%);
-    }
-
-    .toggle {
-      background-color: #4f46e5;
-      height: 100%;
-      color: #fff;
-      position: relative;
-      left: -100%;
-      width: 200%;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
       padding: 1rem;
-      transition: all 0.6s ease-in-out;
     }
 
     .swiper-slide:hover {
       transform: translateY(-10px);
       box-shadow: 12px 12px 30px var(--shadow-dark), -12px -12px 30px var(--shadow-light);
-    .container.active .toggle {
-      transform: translateX(50%);
     }
 
     .swiper-slide img {
@@ -222,32 +132,18 @@
       object-fit: cover;
       border-radius: 1rem;
       margin-bottom: 1rem;
-    .toggle-panel {
-      position: absolute;
-      width: 50%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 30px;
     }
 
     .swiper-slide h3 {
       color: var(--primary);
       font-size: 1.2rem;
       margin-bottom: 0.3rem;
-    .toggle-left {
-      transform: translateX(-200%);
     }
 
     .swiper-slide p {
       font-size: 0.9rem;
       color: #666;
       margin-bottom: 0;
-    .container.active .toggle-left {
-      transform: translateX(0);
     }
 
     /* Responsive nav menu on small screens */
@@ -268,10 +164,6 @@
       nav.active .nav-menu {
         display: flex;
       }
-    .toggle-right {
-      right: 0;
-      transform: translateX(0);
-    }
 
       .nav-toggle {
         display: block;
@@ -279,11 +171,6 @@
         font-size: 1.8rem;
         color: var(--primary);
       }
-    .container a {
-      color: #4f46e5;
-      font-size: 12px;
-      text-decoration: none;
-      margin-top: 10px;
     }
   </style>
 </head>
@@ -335,23 +222,51 @@
           <h3>Justine Carl N.</h3>
           <p>UI/UX Designer</p>
         </div>
-        
+
         <div class="swiper-slide" onclick="location.href='Buenafe.html'">
           <img src="https://assets.onecompiler.app/43c8b2wna/43c8xtk5w/Screenshot%202025-03-19%20155028.jpg" alt="Emmanuel Tamy L. Buenafe" />
           <h3>Emmanuel Tamy L. Buenafe</h3>
           <p>Backend Engineer</p>
         </div>
         <div class="swiper-slide" onclick="location.href='Golondrina.html'">
-          <img src="https://imgur.com/Yj2I98s.jpg" alt="Jade Golondrina
-" />
+          <img src="https://imgur.com/Yj2I98s.jpg" alt="Jade Golondrina" />
           <h3>Jade Golondrina</h3>
-          <p</p>
-        </div>
-        <div class="swiper-slide" onclick="location.href='Sales.html'">
-          <img src="pic.jpg" alt="Mark Clevin A. Sales
-" />
-          <h3>Mark Clevin A. Sales</h3>
           <p></p>
         </div>
+
+        <div class="swiper-slide" onclick="location.href='Sales.html'">
+          <img src=""pic.jpg" alt="Sales, Mark Clevin A." />
+          <h3></h3>
+          <p></p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <script>
+    const swiper = new Swiper('.mySwiper', {
+      slidesPerView: 1,
+      spaceBetween: 25,
+      loop: true,
+      centeredSlides: true,
+      grabCursor: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+        },
+        1024: {
+          slidesPerView: 3,
+        },
+      },
+    });
+  </script>
 </body>
 </html>
