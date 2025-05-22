@@ -1,61 +1,44 @@
-import http from 'http';
-import sql from './db.js';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
-const requestHandler = async (req, res) => {
-  try {
-    const result = await sql`SELECT version()`;
-    const { version } = result[0];
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end(`Connected to Neon!\nPostgreSQL version: ${version}`);
-  } catch (err) {
-    res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.end('Failed to connect to Neon:\n' + err.message);
-    console.error('DB ERROR:', err);
-  }
-};
-
-const express = require('express');
-const cors = require('cors');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(cors()); // Allow cross-origin requests from your frontend
-app.use(express.json()); // Parse JSON bodies
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
-// Simple in-memory user store (demo only)
-const users = [];
+// Routes
 
-// Signup endpoint
-app.post('/signup', (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
-  
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password required' });
-  }
-
-  // Check for existing user
-  if (users.find(u => u.email === email)) {
-    return res.status(409).json({ message: 'User already exists' });
-  }
-
-  // Save user
-  users.push({ firstName, lastName, email, password });
-  console.log('Registered user:', email);
-  res.json({ message: 'User registered successfully' });
+app.get('/', (req, res) => {
+  res.send('StudyPulse backend running!');
 });
 
-// Login endpoint
+// Example signup route
+app.post('/signup', (req, res) => {
+  const { firstName, lastName, email, username, password } = req.body;
+  console.log('Signup data:', req.body);
+
+  // Here you would normally do validation, hashing password, save to DB, etc.
+  // For demo, just respond success:
+  res.status(201).json({ message: 'User registered successfully!' });
+});
+
+// Example login route
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
+  console.log('Login data:', req.body);
 
-  const user = users.find(u => u.email === email && u.password === password);
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid email or password' });
+  // Normally, check credentials against DB.
+  // For demo, accept any login:
+  if (email && password) {
+    res.json({ message: 'Login successful!' });
+  } else {
+    res.status(400).json({ message: 'Invalid email or password' });
   }
-
-  res.json({ message: 'Login successful' });
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
