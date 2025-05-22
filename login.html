@@ -277,7 +277,8 @@
     const loginBtn = document.getElementById('login');
     const signupForm = document.getElementById('signup-form');
     const loginForm = document.getElementById('login-form');
-    const backendUrl = 'https://studypulse-1.onrender.com/api/auth';
+    const backendUrl = 'https://studypulse-zyb9.onrender.com/api/auth';
+
     registerBtn.addEventListener('click', () => {
       container.classList.add('active');
     });
@@ -286,14 +287,6 @@
       container.classList.remove('active');
     });
 
-    async function safeParseJSON(response) {
-      const text = await response.text();
-      try {
-        return JSON.parse(text);
-      } catch {
-        return { error: 'Invalid JSON response', raw: text };
-      }
-    }
     signupForm.addEventListener('submit', async e => {
       e.preventDefault();
 
