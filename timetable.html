@@ -94,6 +94,17 @@
                 <span id="nextDay">&gt;</span>
             </div>
             <table>
+<form id="customTimetableForm" style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
+    <input type="text" id="inputTime" placeholder="Time (e.g. 8:00-9:00)" required>
+    <input type="text" id="inputRoom" placeholder="Room No." required>
+    <input type="text" id="inputCourse" placeholder="Course" required>
+    <select id="inputType" required>
+        <option value="">Type</option>
+        <option value="Lecture">Lecture</option>
+        <option value="Laboratory">Laboratory</option>
+    </select>
+    <button type="submit" style="background:#7380ec; color:#fff; border:none; border-radius:5px; padding:0 15px;">Add</button>
+</form>
                 <thead>
                     <tr>
                         <th>Time</th>
