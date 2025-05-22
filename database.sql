@@ -1,11 +1,12 @@
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id SERIAL PRIMARY KEY,
+  first_name TEXT,
+  last_name TEXT,
+  email TEXT UNIQUE,
+  username TEXT UNIQUE,
+  password TEXT,
+  name TEXT, -- optional if you're using 'name' elsewhere
+  profile_picture TEXT
 );
 
 CREATE TABLE grades (
