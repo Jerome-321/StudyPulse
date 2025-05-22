@@ -253,18 +253,64 @@
     </div>
 
     <script>
-        const container = document.getElementById('container');
-        const registerBtn = document.getElementById('register');
-        const loginBtn = document.getElementById('login');
+    const signupForm = document.getElementById('signup-form');
+    const loginForm = document.getElementById('login-form');
 
-        registerBtn.addEventListener('click', () => {
-            container.classList.add("active");
+    const backendUrl = 'https://studypulse-zyb9.onrender.com'; // Replace with your backend URL
+
+    signupForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const firstName = signupForm.querySelector('input[name="first_name"]').value;
+      const lastName = signupForm.querySelector('input[name="last_name"]').value;
+      const email = signupForm.querySelector('input[name="email"]').value;
+      const password = signupForm.querySelector('input[name="password"]').value;
+
+      try {
+        const res = await fetch(backendUrl + '/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName, lastName, email, password }),
         });
 
-        loginBtn.addEventListener('click', () => {
-            container.classList.remove("active");
+        if (res.ok) {
+          alert('Registration successful! Please login.');
+          signupForm.reset();
+        } else {
+          const err = await res.json();
+          alert('Signup error: ' + err.message);
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
+    });
+
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const email = loginForm.querySelector('input[name="email"]').value;
+      const password = loginForm.querySelector('input[name="password"]').value;
+
+      try {
+        const res = await fetch(backendUrl + '/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
         });
-    </script>
+
+        if (res.ok) {
+          alert('Login successful! Redirecting to dashboard...');
+          // Redirect to your dashboard page
+          window.location.href = 'dashboard.html';
+        } else {
+          const err = await res.json();
+          alert('Login error: ' + err.message);
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
+    });
+  </script>
 
 </body>
 
