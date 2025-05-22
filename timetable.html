@@ -315,9 +315,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('customTimetableForm');
     const tbody = document.querySelector('#timetable tbody');
 
-    // Load existing custom timetable from localStorage
-    let customTimetable = JSON.parse(localStorage.getItem('customTimetable') || '[]');
-    renderTimetable();
+    // Load timetable from server on page load
+    fetch('save_timetable.php?action=get')
+        .then(response => response.json())
+        .then(data => {
+            renderTimetable(data);
+        });
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -326,15 +329,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const course = document.getElementById('inputCourse').value;
         const type = document.getElementById('inputType').value;
 
-        customTimetable.push({ time, room, course, type });
-        localStorage.setItem('customTimetable', JSON.stringify(customTimetable));
-        renderTimetable();
-        form.reset();
+        // Send to server
+        fetch('save_timetable.php?action=add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ time, room, course, type })
+        })
+        .then(response => response.json())
+        .then(data => {
+            renderTimetable(data);
+            form.reset();
+        });
     });
 
-    function renderTimetable() {
+    function renderTimetable(entries) {
         tbody.innerHTML = '';
-        customTimetable.forEach((entry, idx) => {
+        (entries || []).forEach((entry, idx) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${entry.time}</td>
@@ -347,11 +357,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Make removeEntry global
+    // Remove entry
     window.removeEntry = function(idx) {
-        customTimetable.splice(idx, 1);
-        localStorage.setItem('customTimetable', JSON.stringify(customTimetable));
-        renderTimetable();
+        fetch('save_timetable.php?action=remove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idx })
+        })
+        .then(response => response.json())
+        .then(data => {
+            renderTimetable(data);
+        });
     }
 });
 </script>
