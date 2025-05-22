@@ -130,6 +130,39 @@ exports.updateTimetable = async (req, res) => {
 };
 
 
+// controllers/coursesController.js
+const db = require('../db');
+
+exports.getCourses = async (req, res) => {
+  const result = await db.query('SELECT * FROM courses WHERE user_id = $1', [req.user.id]);
+  res.json(result.rows);
+};
+
+exports.addCourse = async (req, res) => {
+  const { course, description } = req.body;
+  const result = await db.query(
+    'INSERT INTO courses (user_id, course, description) VALUES ($1, $2, $3) RETURNING *',
+    [req.user.id, course, description]
+  );
+  res.status(201).json(result.rows[0]);
+};
+
+exports.updateCourse = async (req, res) => {
+  const { course, description } = req.body;
+  const id = req.params.id;
+  await db.query(
+    'UPDATE courses SET course = $1, description = $2 WHERE id = $3 AND user_id = $4',
+    [course, description, id, req.user.id]
+  );
+  res.json({ message: 'Course updated' });
+};
+
+exports.deleteCourse = async (req, res) => {
+  await db.query('DELETE FROM courses WHERE id = $1 AND user_id = $2', [req.params.id, req.user.id]);
+  res.json({ message: 'Course deleted' });
+};
+
+
 // routes/auth.js
 const express = require('express');
 const router = express.Router();
@@ -171,17 +204,31 @@ router.put('/', updateTimetable);
 module.exports = router;
 
 
+// routes/courses.js
+const express = require('express');
+const router = express.Router();
+const { getCourses, addCourse, updateCourse, deleteCourse } = require('../controllers/coursesController');
+
+router.get('/', getCourses);
+router.post('/', addCourse);
+router.put('/:id', updateCourse);
+router.delete('/:id', deleteCourse);
+
+module.exports = router;
+
+
 // server.js
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
-const db = require('./db'); 
+const db = require('./db');
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const gradesRoutes = require('./routes/grades');
 const timetableRoutes = require('./routes/timetable');
+const coursesRoutes = require('./routes/courses');
 const { authMiddleware } = require('./middleware/authMiddleware');
 
 const app = express();
@@ -201,6 +248,7 @@ app.use(authMiddleware);
 app.use('/api/profile', profileRoutes);
 app.use('/api/grades', gradesRoutes);
 app.use('/api/timetable', timetableRoutes);
+app.use('/api/courses', coursesRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
