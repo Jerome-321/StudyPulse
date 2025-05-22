@@ -331,7 +331,7 @@
 
         if (response.ok) {
           alert('Login successful! Redirecting...');
-          window.location.href = 'dashboard.html';  // change this to your actual dashboard page
+          window.location.href = 'dashboard.html';  
         } else {
           const data = await response.json();
           alert('Login error: ' + data.message);
