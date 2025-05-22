@@ -5,105 +5,97 @@ import bodyParser from "body-parser";
 import pg from "pg";
 import multer from "multer";
 import path from "path";
-import fs from "fs";
-import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+// DB client connection
 const db = new pg.Client({
   connectionString: process.env.DATABASE_URL,
 });
-db.connect();
+await db.connect();
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Multer setup for profile picture upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname)),
 });
 const upload = multer({ storage });
 
-// Dummy auth middleware (replace with real auth later)
+// Dummy auth middleware (replace with real JWT or session)
 const authMiddleware = (req, res, next) => {
-  req.userId = 1; // Simulated user ID
+  // For example, you might extract userId from a token in headers
+  req.userId = 1; // mock userId for now
   next();
 };
 
+// === AUTH ROUTES ===
+import authRoutes from "./routes/auth.js";
+app.use("/api/auth", authRoutes);
+
 // === PROFILE ROUTES ===
-app.get("/api/profile", authMiddleware, async (req, res) => {
-  const result = await db.query("SELECT name, email, profile_picture FROM users WHERE id = $1", [req.userId]);
-  res.json(result.rows[0]);
+import profileRoutes from "./routes/profile.js";
+// Inject multer upload and db in profile routes
+// We'll create a small router wrapper here to handle upload inside profile routes
+import { Router } from "express";
+const profileRouter = Router();
+
+profileRouter.use(authMiddleware);
+
+profileRouter.get("/", async (req, res) => {
+  try {
+    const result = await db.query("SELECT name, email, profile_picture FROM users WHERE id = $1", [req.userId]);
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching profile" });
+  }
 });
 
-app.put("/api/profile", authMiddleware, upload.single("profile_picture"), async (req, res) => {
-  const { name, email } = req.body;
-  const profilePicPath = req.file ? `/uploads/${req.file.filename}` : null;
-  if (profilePicPath) {
-    await db.query("UPDATE users SET name=$1, email=$2, profile_picture=$3 WHERE id=$4", [name, email, profilePicPath, req.userId]);
-  } else {
-    await db.query("UPDATE users SET name=$1, email=$2 WHERE id=$3", [name, email, req.userId]);
+profileRouter.put("/", upload.single("profile_picture"), async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const profilePicPath = req.file ? `/uploads/${req.file.filename}` : null;
+
+    if (profilePicPath) {
+      await db.query(
+        "UPDATE users SET name=$1, email=$2, profile_picture=$3 WHERE id=$4",
+        [name, email, profilePicPath, req.userId]
+      );
+    } else {
+      await db.query("UPDATE users SET name=$1, email=$2 WHERE id=$3", [name, email, req.userId]);
+    }
+    res.json({ message: "Profile updated" });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating profile" });
   }
-  res.sendStatus(200);
 });
+
+app.use("/api/profile", profileRouter);
 
 // === GRADES ROUTES ===
-app.get("/api/grades", authMiddleware, async (req, res) => {
-  const result = await db.query("SELECT * FROM grades WHERE user_id = $1", [req.userId]);
-  res.json(result.rows);
-});
-
-app.post("/api/grades", authMiddleware, async (req, res) => {
-  const { course, prelim, midterm, final } = req.body;
-  await db.query("INSERT INTO grades (user_id, course, prelim, midterm, final) VALUES ($1, $2, $3, $4, $5)", [req.userId, course, prelim, midterm, final]);
-  res.sendStatus(201);
-});
-
-app.put("/api/grades/:id", authMiddleware, async (req, res) => {
-  const { course, prelim, midterm, final } = req.body;
-  await db.query("UPDATE grades SET course=$1, prelim=$2, midterm=$3, final=$4 WHERE id=$5 AND user_id=$6", [course, prelim, midterm, final, req.params.id, req.userId]);
-  res.sendStatus(200);
-});
-
-app.delete("/api/grades/:id", authMiddleware, async (req, res) => {
-  await db.query("DELETE FROM grades WHERE id = $1 AND user_id = $2", [req.params.id, req.userId]);
-  res.sendStatus(200);
-});
+import gradesRoutes from "./routes/grades.js";
+app.use("/api/grades", authMiddleware, gradesRoutes);
 
 // === TIMETABLE ROUTES ===
-app.get("/api/timetable", authMiddleware, async (req, res) => {
-  const result = await db.query("SELECT * FROM timetable WHERE user_id = $1", [req.userId]);
-  res.json(result.rows);
-});
+import timetableRoutes from "./routes/timetable.js";
+app.use("/api/timetable", authMiddleware, timetableRoutes);
 
-app.post("/api/timetable", authMiddleware, async (req, res) => {
-  const { day, subject, time } = req.body;
-  await db.query("INSERT INTO timetable (user_id, day, subject, time) VALUES ($1, $2, $3, $4)", [req.userId, day, subject, time]);
-  res.sendStatus(201);
-});
-
-app.put("/api/timetable/:id", authMiddleware, async (req, res) => {
-  const { day, subject, time } = req.body;
-  await db.query("UPDATE timetable SET day=$1, subject=$2, time=$3 WHERE id=$4 AND user_id=$5", [day, subject, time, req.params.id, req.userId]);
-  res.sendStatus(200);
-});
-
-app.delete("/api/timetable/:id", authMiddleware, async (req, res) => {
-  await db.query("DELETE FROM timetable WHERE id = $1 AND user_id = $2", [req.params.id, req.userId]);
-  res.sendStatus(200);
-});
-
-// === LOGOUT ===
+// === LOGOUT ROUTE ===
 app.post("/api/logout", authMiddleware, (req, res) => {
-  res.clearCookie("token"); // Simulated logout
-  res.sendStatus(200);
+  // If you use cookies or JWT, clear token here
+  res.clearCookie("token");
+  res.json({ message: "Logged out successfully" });
 });
 
 app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
