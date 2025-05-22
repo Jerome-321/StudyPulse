@@ -177,6 +177,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const db = require('./db'); 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const gradesRoutes = require('./routes/grades');
@@ -203,4 +204,3 @@ app.use('/api/timetable', timetableRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
