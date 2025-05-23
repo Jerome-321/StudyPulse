@@ -1,4 +1,4 @@
-name: Deploy to Render
+name: Build and Deploy StudyPulse
 
 on:
   push:
@@ -6,37 +6,34 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+    # Setup Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 22
 
-      - name: Install frontend dependencies
-        run: npm install
-        working-directory: ./frontend
+    # Install and build frontend
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm install
 
-      - name: Build React frontend
-        run: npm run build
-        working-directory: ./frontend
+    - name: Build frontend
+      working-directory: ./frontend
+      run: npm run build
 
-      - name: Copy frontend build to backend
-        run: |
-          mkdir -p frontend/build
-          cp -r frontend/build ./frontend-build
-          rm -rf frontend
-          mv frontend-build frontend
+    # Install backend dependencies
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm install
 
-      - name: Deploy to Render
-        run: |
-          curl -X POST https://api.render.com/deploy/srv-REPLACE_THIS \
-          -H 'Authorization: Bearer ${{ secrets.RENDER_API_KEY }}' \
-          -H 'Accept: application/json' \
-          -H 'Content-Type: application/json' \
-          --data '{"clearCache": true}'
+    # Optionally, run backend tests here
+
+    # Add deploy steps here (e.g., push to Render, AWS, Heroku, etc.)
+    # For example, if you use Render CLI or other deploy method
