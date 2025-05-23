@@ -14,6 +14,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $new = $_POST['newpass'] ?? '';
     $confirm = $_POST['confirmpass'] ?? '';
 
+    // Get current password hash from database
+    $stmt = $conn->prepare('SELECT password FROM users WHERE id = ?');
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $stmt->bind_result($hashedPassword);
+    $stmt->fetch();
+    $stmt->close();
+
+    if (!$hashedPassword || !password_verify($current, $hashedPassword)) {
+        $error = "Current password is incorrect.";
+    } elseif ($new !== $confirm) {
+        $error = "Passwords do not match.";
+    } elseif (!preg_match('/^(?=.*\d)(?=.*[\W_]).{8,}$/', $new)) {
+        $error = "Password must be at least 8 characters, include a number and a special character.";
+    } else {
+        $newHash = password_hash($new, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare('UPDATE users SET password=? WHERE id=?');
+        $stmt->bind_param('si', $newHash, $userId);
+        $stmt->execute();
+        $stmt->close();
+        $success = "Password changed!";
+    }
+}
     // Fetch hashed password from DB
     $stmt = $pdo->prepare('SELECT password FROM users WHERE id = ?');
     $stmt->execute([$userId]);
