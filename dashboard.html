@@ -1,10 +1,4 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html"); // Redirect to login page if not logged in
-    exit();
-}
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -352,29 +346,30 @@ if (!isset($_SESSION['user_id'])) {
 
     <div class="container">
         <aside>
-            <div class="profile">
-                <div class="top">
-                    <div class="profile-photo">
-                        <img id="currentProfilePhoto" src="./images/profile-1.jpg" alt="">
-                    </div>
-                    <div class="info">
-                        <p id="profileName">Name</p>
-                        <small class="text-muted">12102030</small>
-                    </div>
-                </div>
-                <div class="about">
-                    <h5>Course</h5>
-                    <p id="profileCourse"></p>
-                    <h5>Date Of Birth</h5>
-                    <p id="profileDob">29-Feb-2020</p>
-                    <h5>Contact</h5>
-                    <p id="profileContact">1234567890</p>
-                    <h5>Email</h5>
-                    <p id="profileEmail">unknown@gmail.com</p>
-                    <h5>Address</h5>
-                    <p id="profileAddress">dsad</p>
-                </div>
-            </div>
+<div class="profile">
+  <div class="top">
+    <div class="profile-photo">
+      <img id="currentProfilePhoto" src="./images/profile-1.jpg" alt="">
+    </div>
+    <div class="info">
+      <p id="profileName">Name</p>
+      <small class="text-muted" id="profileId">12102030</small> <!-- Added id for user ID or similar -->
+    </div>
+  </div>
+  <div class="about">
+    <h5>Course</h5>
+    <p id="profileCourse"></p>
+    <h5>Date Of Birth</h5>
+    <p id="profileDob">29-Feb-2020</p>
+    <h5>Contact</h5>
+    <p id="profileContact">1234567890</p>
+    <h5>Email</h5>
+    <p id="profileEmail">unknown@gmail.com</p>
+    <h5>Address</h5>
+    <p id="profileAddress">dsad</p>
+  </div>
+</div>
+
         </aside>
 
         <main>
@@ -421,174 +416,301 @@ if (!isset($_SESSION['user_id'])) {
 
     <script src="timeTable.js"></script>
     <script src="app.js"></script>
-    <script>
-    window.onload = function() {
-        loadSubjects();
+    <!-- Inside your dashboard.html -->
+<script>
+ document.addEventListener("DOMContentLoaded", () => {
+  const user = JSON.parse(localStorage.getItem('user'));
 
-        let courses = JSON.parse(localStorage.getItem("courses")) || [];
-        let container = document.getElementById("dynamic-grades");
+  if (!user) {
+    alert("No user found. Please login first.");
+    window.location.href = "login.html"; // or login page
+    return;
+  }
 
-        courses.forEach(course => {
-            let div = document.createElement("div");
-            div.className = "grade-card";
-            div.innerHTML = `
-                <h3><span class="material-icons-sharp">school</span>
-                ${course.name}</h3>
-                <p>${course.prelim} / ${course.midterm} / ${course.final}</p>
-                <div class="progress" style="--percentage:${course.percentage}">
-                    <svg><circle cx="38" cy="38" r="36"></circle></svg>
-                    <div class="number"><p>${course.percentage}%</p></div>
-                </div>
-                <small>Updated</small>
-            `;
-            container.appendChild(div);
-        });
+  // Populate profile fields
+  document.getElementById("profile-name").textContent = `${user.firstName} ${user.lastName}`;
+  document.getElementById("profile-email").textContent = user.email;
+  document.getElementById("profile-username").textContent = user.username;
+});
 
-        // Load profile data
-        loadProfileData();
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Retrieve user object from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    alert("No user logged in! Redirecting to login page.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Populate profile fields with user data (add fallback for missing fields)
+  document.getElementById("profileName").textContent = `${user.firstName || ""} ${user.lastName || ""}`;
+  
+  // Example: Assuming you stored these fields during signup (if not, defaults will be empty)
+  document.getElementById("profileCourse").textContent = user.course || "Not provided";
+  document.getElementById("profileDob").textContent = user.dob || "Not provided";
+  document.getElementById("profileContact").textContent = user.contact || "Not provided";
+  document.getElementById("profileEmail").textContent = user.email || "Not provided";
+  document.getElementById("profileAddress").textContent = user.address || "Not provided";
+
+  // Optional: if you stored a profile photo URL during signup
+  if(user.profilePhoto) {
+    document.getElementById("currentProfilePhoto").src = user.profilePhoto;
+  }
+});
+ocument.addEventListener("DOMContentLoaded", () => {
+  const userKey = "user";
+
+  // Elements for profile display
+  const profileName = document.getElementById("profileName");
+  const profileCourse = document.getElementById("profileCourse");
+  const profileDob = document.getElementById("profileDob");
+  const profileContact = document.getElementById("profileContact");
+  const profileEmail = document.getElementById("profileEmail");
+  const profileAddress = document.getElementById("profileAddress");
+  const currentProfilePhoto = document.getElementById("currentProfilePhoto");
+
+  // Elements for settings form inputs
+  const profileForm = document.getElementById("profileForm");
+  const firstNameInput = document.getElementById("firstName");
+  const lastNameInput = document.getElementById("lastName");
+  const dobInput = document.getElementById("dob");
+  const contactInput = document.getElementById("contact");
+  const emailInput = document.getElementById("email");
+  const courseSelect = document.getElementById("course");
+  const addressInput = document.getElementById("address");
+  const profilePreview = document.getElementById("profilePreview");
+  const photoUrlInput = document.getElementById("photoUrl");
+
+  // Load user from localStorage
+  let user = JSON.parse(localStorage.getItem(userKey));
+
+  if (!user) {
+    alert("No user found! Redirecting to login...");
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Function to update profile display
+  function updateProfileDisplay(data) {
+    profileName.textContent = `${data.firstName || ""} ${data.lastName || ""}`;
+    profileCourse.textContent = data.course || "Not provided";
+    profileDob.textContent = data.dob || "Not provided";
+    profileContact.textContent = data.contact || "Not provided";
+    profileEmail.textContent = data.email || "Not provided";
+    profileAddress.textContent = data.address || "Not provided";
+    currentProfilePhoto.src = data.profilePhoto || "./images/profile-1.jpg";
+  }
+
+  // Function to fill settings form inputs
+  function fillSettingsForm(data) {
+    firstNameInput.value = data.firstName || "";
+    lastNameInput.value = data.lastName || "";
+    dobInput.value = data.dob || "";
+    contactInput.value = data.contact || "";
+    emailInput.value = data.email || "";
+    courseSelect.value = data.course || "";
+    addressInput.value = data.address || "";
+    profilePreview.src = data.profilePhoto || "./images/profile-1.jpg";
+    photoUrlInput.value = data.profilePhoto || "";
+  }
+
+  // Initialize UI with loaded user data
+  updateProfileDisplay(user);
+  fillSettingsForm(user);
+
+  // Listen for changes on photo URL input to update preview
+  photoUrlInput.addEventListener("input", () => {
+    const url = photoUrlInput.value.trim();
+    profilePreview.src = url || "./images/profile-1.jpg";
+  });
+
+  // Listen for file upload and update preview & input
+  const photoUpload = document.getElementById("photoUpload");
+  photoUpload.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      profilePreview.src = event.target.result;
+      photoUrlInput.value = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Handle form submission
+  profileForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // Update user object with form values
+    user.firstName = firstNameInput.value.trim();
+    user.lastName = lastNameInput.value.trim();
+    user.dob = dobInput.value;
+    user.contact = contactInput.value.trim();
+    user.email = emailInput.value.trim().toLowerCase();
+    user.course = courseSelect.value;
+    user.address = addressInput.value.trim();
+    user.profilePhoto = photoUrlInput.value.trim() || "./images/profile-1.jpg";
+
+    // Save back to localStorage
+    localStorage.setItem(userKey, JSON.stringify(user));
+
+    // Update profile display immediately
+    updateProfileDisplay(user);
+
+    alert("Profile updated successfully!");
+  });
+
+  // Optional: you can add code to handle modal open/close here as well.
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const userKey = "user";
+  const user = JSON.parse(localStorage.getItem(userKey));
+
+  if (!user) {
+    alert("No user logged in! Redirecting to login page.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Profile display elements
+  const profileName = document.getElementById("profileName");
+  const profileCourse = document.getElementById("profileCourse");
+  const profileDob = document.getElementById("profileDob");
+  const profileContact = document.getElementById("profileContact");
+  const profileEmail = document.getElementById("profileEmail");
+  const profileAddress = document.getElementById("profileAddress");
+  const currentProfilePhoto = document.getElementById("currentProfilePhoto");
+
+  // Settings form inputs
+  const profileForm = document.getElementById("profileForm");
+  const firstNameInput = document.getElementById("firstName");
+  const lastNameInput = document.getElementById("lastName");
+  const dobInput = document.getElementById("dob");
+  const contactInput = document.getElementById("contact");
+  const emailInput = document.getElementById("email");
+  const courseSelect = document.getElementById("course");
+  const addressInput = document.getElementById("address");
+  const profilePreview = document.getElementById("profilePreview");
+  const photoUrlInput = document.getElementById("photoUrl");
+  const photoUploadInput = document.getElementById("photoUpload");
+
+  // Settings modal and tabs
+  const settingsModal = document.getElementById("settingsModal");
+  const openSettingsBtn = document.getElementById("openSettings");
+  const closeSettingsBtn = document.getElementById("closeSettings");
+  const settingsTabs = document.querySelectorAll(".settings-tab");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  // Populate profile display
+  profileName.textContent = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+  profileCourse.textContent = user.course || "Not provided";
+  profileDob.textContent = user.dob || "Not provided";
+  profileContact.textContent = user.contact || "Not provided";
+  profileEmail.textContent = user.email || "Not provided";
+  profileAddress.textContent = user.address || "Not provided";
+
+  if (user.profilePhoto) {
+    currentProfilePhoto.src = user.profilePhoto;
+  }
+
+  // Populate settings form inputs
+  firstNameInput.value = user.firstName || "";
+  lastNameInput.value = user.lastName || "";
+  dobInput.value = user.dob || "";
+  contactInput.value = user.contact || "";
+  emailInput.value = user.email || "";
+  courseSelect.value = user.course || "";
+  addressInput.value = user.address || "";
+  profilePreview.src = user.profilePhoto || "./images/profile-1.jpg";
+  photoUrlInput.value = user.profilePhoto || "";
+
+  // Open settings modal
+  openSettingsBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    settingsModal.style.display = "flex";
+  });
+
+  // Close settings modal
+  closeSettingsBtn.addEventListener("click", () => {
+    settingsModal.style.display = "none";
+  });
+
+  // Switch tabs inside settings modal
+  settingsTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      // Remove active class from all tabs and contents
+      settingsTabs.forEach(t => t.classList.remove("active"));
+      tabContents.forEach(c => c.classList.remove("active"));
+
+      // Add active class to clicked tab and corresponding content
+      tab.classList.add("active");
+      const target = tab.getAttribute("data-tab");
+      document.getElementById(`${target}-tab`).classList.add("active");
+    });
+  });
+
+  // Profile photo upload preview
+  photoUploadInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        profilePreview.src = ev.target.result;
+        photoUrlInput.value = "";
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Profile photo URL input preview
+  photoUrlInput.addEventListener("input", () => {
+    const url = photoUrlInput.value.trim();
+    if (url) {
+      profilePreview.src = url;
+      photoUploadInput.value = ""; // reset file input
+    }
+  });
+
+  // Save profile changes form submission
+  profileForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // Collect form data
+    const updatedUser = {
+      ...user,
+      firstName: firstNameInput.value.trim(),
+      lastName: lastNameInput.value.trim(),
+      dob: dobInput.value,
+      contact: contactInput.value.trim(),
+      email: emailInput.value.trim(),
+      course: courseSelect.value,
+      address: addressInput.value.trim(),
+      profilePhoto: profilePreview.src,
     };
 
-    function loadProfileData() {
-        const firstName = localStorage.getItem('user_firstname') || 'First';
-        const lastName = localStorage.getItem('user_lastname') || 'Last';
-        const email = localStorage.getItem('user_email') || 'unknown@gmail.com';
-        const dob = localStorage.getItem('user_dob') || '29-Feb-2020';
-        const contact = localStorage.getItem('user_contact') || '1234567890';
-        const course = localStorage.getItem('user_course') || '';
-        const address = localStorage.getItem('user_address') || 'dsad';
-        const profilePhoto = localStorage.getItem('user_profile_photo') || './images/profile-1.jpg';
+    // Save updated user back to localStorage
+    localStorage.setItem(userKey, JSON.stringify(updatedUser));
 
-        // Set profile data in sidebar
-        document.getElementById('profileName').textContent = `${firstName} ${lastName}`;
-        document.getElementById('profileEmail').textContent = email;
-        document.getElementById('profileDob').textContent = dob;
-        document.getElementById('profileContact').textContent = contact;
-        document.getElementById('profileCourse').textContent = course;
-        document.getElementById('profileAddress').textContent = address;
-        document.getElementById('currentProfilePhoto').src = profilePhoto;
+    // Update profile display on page
+    profileName.textContent = `${updatedUser.firstName} ${updatedUser.lastName}`.trim();
+    profileCourse.textContent = updatedUser.course || "Not provided";
+    profileDob.textContent = updatedUser.dob || "Not provided";
+    profileContact.textContent = updatedUser.contact || "Not provided";
+    profileEmail.textContent = updatedUser.email || "Not provided";
+    profileAddress.textContent = updatedUser.address || "Not provided";
+    currentProfilePhoto.src = updatedUser.profilePhoto;
 
-        // Set form data in settings modal
-        document.getElementById('firstName').value = firstName;
-        document.getElementById('lastName').value = lastName;
-        document.getElementById('email').value = email;
-        document.getElementById('dob').value = dob;
-        document.getElementById('contact').value = contact;
-        document.getElementById('course').value = course;
-        document.getElementById('address').value = address;
-        document.getElementById('profilePreview').src = profilePhoto;
-    }
+    alert("Profile changes saved!");
 
-    // Settings modal functionality
-    document.getElementById('openSettings').addEventListener('click', function() {
-        document.getElementById('settingsModal').style.display = 'flex';
-    });
+    // Close modal
+    settingsModal.style.display = "none";
+  });
 
-    document.getElementById('closeSettings').addEventListener('click', function() {
-        document.getElementById('settingsModal').style.display = 'none';
-    });
-
-    // Tab switching functionality
-    document.querySelectorAll('.settings-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            // Remove active class from all tabs and content
-            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-            // Add active class to clicked tab and corresponding content
-            this.classList.add('active');
-            const tabId = this.getAttribute('data-tab');
-            document.getElementById(`${tabId}-tab`).classList.add('active');
-        });
-    });
-
-    // Handle photo upload
-    document.getElementById('photoUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                document.getElementById('profilePreview').src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Handle photo URL input
-    document.getElementById('photoUrl').addEventListener('change', function() {
-        const url = this.value.trim();
-        if (url) {
-            document.getElementById('profilePreview').src = url;
-        }
-    });
-
-    // Save profile data
-    document.getElementById('profileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('email').value;
-        const dob = document.getElementById('dob').value;
-        const contact = document.getElementById('contact').value;
-        const course = document.getElementById('course').value;
-        const address = document.getElementById('address').value;
-        const profilePhoto = document.getElementById('profilePreview').src;
-
-        // Save to localStorage
-        localStorage.setItem('user_firstname', firstName);
-        localStorage.setItem('user_lastname', lastName);
-        localStorage.setItem('user_email', email);
-        localStorage.setItem('user_dob', dob);
-        localStorage.setItem('user_contact', contact);
-        localStorage.setItem('user_course', course);
-        localStorage.setItem('user_address', address);
-        localStorage.setItem('user_profile_photo', profilePhoto);
-
-        // Update profile display
-        loadProfileData();
-
-        alert('Profile updated successfully!');
-    });
-
-    // Handle password change
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const currentPass = document.getElementById('currentpass').value;
-        const newPass = document.getElementById('newpass').value;
-        const confirmPass = document.getElementById('confirmpass').value;
-
-        // Basic validation
-        if (newPass !== confirmPass) {
-            alert("New passwords don't match!");
-            return;
-        }
-
-        if (newPass.length < 8) {
-            alert("Password must be at least 8 characters long!");
-            return;
-        }
-
-        // In a real app, you would send this to the server
-        alert('Password changed successfully!');
-
-        // Clear the form
-        this.reset();
-    });
-
-    // Optional: Add confirmation dialog for logout
-    document.getElementById('logout-link').addEventListener('click', function(e) {
-        if(!confirm('Are you sure you want to logout?')) {
-            e.preventDefault();
-        }
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === document.getElementById('settingsModal')) {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-        <script>
+});
     window.onload = loadSubjects;
     </script>
     <script>
@@ -611,7 +733,10 @@ if (!isset($_SESSION['user_id'])) {
         `;
         container.appendChild(div);
     });
-    });
-    </script>
+}
+</script>
+</script> src="timeTable.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
+
