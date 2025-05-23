@@ -1,549 +1,500 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html"); // Redirect to login page if not logged in
-    exit();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link rel="shortcut icon" href="./images/logo.png">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Settings Modal Styles */
-        .settings-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .settings-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .settings-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .settings-header h2 {
-            color: var(--color-primary);
-        }
-
-        .close-settings {
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-
-        .settings-tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .settings-tab {
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .settings-tab.active {
-            border-bottom: 2px solid var(--color-primary);
-            color: var(--color-primary);
-            font-weight: 500;
-        }
-
-        .settings-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .password-form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input, 
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .profile-photo-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            grid-column: span 2;
-            margin-bottom: 1rem;
-        }
-
-        .profile-preview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 1rem;
-            border: 3px solid var(--color-primary);
-        }
-
-        .photo-upload-btn {
-            padding: 0.5rem 1rem;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .save-btn {
-            grid-column: span 2;
-            padding: 0.8rem;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            margin-top: 1rem;
-        }
-
-        .photo-url-input {
-            width: 100%;
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .password-requirements {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="logo" title="StudyPulse">
-            <img src="./images/logo.png" alt="">
-            <h2>Study<span class="danger">Pulse</span></h2>
-        </div>
-        <div class="navbar">
-            <a href="dashboard.html" class="active">
-                <span class="material-icons-sharp">home</span>
-                <h3>Home</h3>
-            </a>
-            <a href="timetable.html" onclick="timeTableAll()">
-                <span class="material-icons-sharp">today</span>
-                <h3>Class</h3>
-            </a> 
-            <a href="grades.html">
-                <span class="material-icons-sharp">grid_view</span>
-                <h3>Courses</h3>
-            </a>
-            <a href="#" id="openSettings">
-                <span class="material-icons-sharp">settings</span>
-                <h3>Settings</h3>
-            </a>
-            <a href="logout.php" id="logout-link">
-                <span class="material-icons-sharp">logout</span>
-                <h3>Logout</h3>
-            </a>
-        </div>
-        <div id="profile-btn">
-            <span class="material-icons-sharp">person</span>
-        </div>
-        <div class="theme-toggler">
-            <span class="material-icons-sharp active">light_mode</span>
-            <span class="material-icons-sharp">dark_mode</span>
-        </div>
-    </header>
-
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h2>Account Settings</h2>
-                <span class="material-icons-sharp close-settings" id="closeSettings">close</span>
-            </div>
-
-            <div class="settings-tabs">
-                <div class="settings-tab active" data-tab="profile">Profile</div>
-                <div class="settings-tab" data-tab="password">Password</div>
-            </div>
-
-            <!-- Profile Tab -->
-            <div class="tab-content active" id="profile-tab">
-                <form class="settings-form" id="profileForm">
-                    <div class="profile-photo-upload">
-                        <img id="profilePreview" src="./images/profile-1.jpg" alt="Profile Photo" class="profile-preview">
-                        <input type="file" id="photoUpload" accept="image/*" style="display: none;">
-                        <button type="button" class="photo-upload-btn" onclick="document.getElementById('photoUpload').click()">Upload Photo</button>
-                        <input type="text" id="photoUrl" class="photo-url-input" placeholder="Or enter image URL">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dob">Date of Birth</label>
-                        <input type="date" id="dob">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contact">Contact Number</label>
-                        <input type="tel" id="contact">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="course">Course</label>
-                        <select id="course">
-                            <option value="">Select Course</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Business">Business</option>
-                            <option value="Arts">Arts</option>
-                            <option value="Science">Science</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="address">Address</label>
-                        <input type="text" id="address">
-                    </div>
-
-                    <button type="submit" class="save-btn">Save Profile Changes</button>
-                </form>
-            </div>
-
-            <!-- Password Tab -->
-            <div class="tab-content" id="password-tab">
-                <form class="password-form" id="passwordForm">
-                    <p class="text-muted">Your new password must be different from previous used passwords.</p>
-
-                    <div class="form-group">
-                        <label for="currentpass">Current Password</label>
-                        <input type="password" id="currentpass" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="newpass">New Password</label>
-                        <input type="password" id="newpass" required>
-                        <p class="password-requirements">Minimum 8 characters with at least one number and one special character</p>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirmpass">Confirm Password</label>
-                        <input type="password" id="confirmpass" required>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="save-btn">Change Password</button>
-                        <a href="#" id="cancelPassword" style="margin-left: 1rem;">Cancel</a>
-                    </div>
-
-                    <div class="form-group">
-                        <a href="#" id="forgotPassword"><p>Forgot password?</p></a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <aside>
-            <div class="profile">
-                <div class="top">
-                    <div class="profile-photo">
-                        <img id="currentProfilePhoto" src="./images/profile-1.jpg" alt="">
-                    </div>
-                    <div class="info">
-                        <p id="profileName">Name</p>
-                        <small class="text-muted">12102030</small>
-                    </div>
-                </div>
-                <div class="about">
-                    <h5>Course</h5>
-                    <p id="profileCourse"></p>
-                    <h5>Date Of Birth</h5>
-                    <p id="profileDob">29-Feb-2020</p>
-                    <h5>Contact</h5>
-                    <p id="profileContact">1234567890</p>
-                    <h5>Email</h5>
-                    <p id="profileEmail">unknown@gmail.com</p>
-                    <h5>Address</h5>
-                    <p id="profileAddress">dsad</p>
-                </div>
-            </div>
-        </aside>
-
-        <main>
-            <h1>Grades</h1>
-            <div class="subjects" id="dynamic-grades">
-                <!-- Dynamic content will be inserted here by JavaScript -->
-            </div>
-
-            <div class="timetable" id="timetable">
-                <div>
-                    <span id="prevDay">&lt;</span>
-                    <h2>Today's Timetable</h2>
-                    <span id="nextDay">&gt;</span>
-                </div>
-                <span class="closeBtn" onclick="timeTableAll()">X</span>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Room No.</th>
-                            <th>Subject</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <div id="Subjects" class="subjects"></div>
-            </div>
-        </main>
-
-        <div class="right">
-            <div class="calendar">
-                <h2 class="calendar-date">May 1, 2025</h2>
-                <div class="calendar-entry">
-                    <div class="date-icon">📅</div>
-                    <div class="details">
-                        <h3>Labor Day (PH)</h3>
-                        <small class="text-muted">Public Holiday</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="timeTable.js"></script>
-    <script src="app.js"></script>
-    <script>
-    window.onload = function() {
-        loadSubjects();
-
-        let courses = JSON.parse(localStorage.getItem("courses")) || [];
-        let container = document.getElementById("dynamic-grades");
-
-        courses.forEach(course => {
-            let div = document.createElement("div");
-            div.className = "grade-card";
-            div.innerHTML = `
-                <h3><span class="material-icons-sharp">school</span>
-                ${course.name}</h3>
-                <p>${course.prelim} / ${course.midterm} / ${course.final}</p>
-                <div class="progress" style="--percentage:${course.percentage}">
-                    <svg><circle cx="38" cy="38" r="36"></circle></svg>
-                    <div class="number"><p>${course.percentage}%</p></div>
-                </div>
-                <small>Updated</small>
-            `;
-            container.appendChild(div);
-        });
-
-        // Load profile data
-        loadProfileData();
-    };
-
-    function loadProfileData() {
-        const firstName = localStorage.getItem('user_firstname') || 'First';
-        const lastName = localStorage.getItem('user_lastname') || 'Last';
-        const email = localStorage.getItem('user_email') || 'unknown@gmail.com';
-        const dob = localStorage.getItem('user_dob') || '29-Feb-2020';
-        const contact = localStorage.getItem('user_contact') || '1234567890';
-        const course = localStorage.getItem('user_course') || '';
-        const address = localStorage.getItem('user_address') || 'dsad';
-        const profilePhoto = localStorage.getItem('user_profile_photo') || './images/profile-1.jpg';
-
-        // Set profile data in sidebar
-        document.getElementById('profileName').textContent = `${firstName} ${lastName}`;
-        document.getElementById('profileEmail').textContent = email;
-        document.getElementById('profileDob').textContent = dob;
-        document.getElementById('profileContact').textContent = contact;
-        document.getElementById('profileCourse').textContent = course;
-        document.getElementById('profileAddress').textContent = address;
-        document.getElementById('currentProfilePhoto').src = profilePhoto;
-
-        // Set form data in settings modal
-        document.getElementById('firstName').value = firstName;
-        document.getElementById('lastName').value = lastName;
-        document.getElementById('email').value = email;
-        document.getElementById('dob').value = dob;
-        document.getElementById('contact').value = contact;
-        document.getElementById('course').value = course;
-        document.getElementById('address').value = address;
-        document.getElementById('profilePreview').src = profilePhoto;
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Settings - StudyPulse</title>
+  <link rel="shortcut icon" href="./images/logo.png" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Root colors */
+    :root {
+      --color-primary: #4e73df;
+      --color-danger: #e74c3c;
+      --color-bg: #f4f4f4;
+      --color-white: #fff;
+      --color-text: #333;
     }
 
-    // Settings modal functionality
-    document.getElementById('openSettings').addEventListener('click', function() {
-        document.getElementById('settingsModal').style.display = 'flex';
-    });
+    /* Reset */
+    * {
+      box-sizing: border-box;
+    }
 
-    document.getElementById('closeSettings').addEventListener('click', function() {
-        document.getElementById('settingsModal').style.display = 'none';
-    });
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--color-bg);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-    // Tab switching functionality
-    document.querySelectorAll('.settings-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            // Remove active class from all tabs and content
-            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    /* Header - same as your dashboard */
+    header {
+      height: 60px;
+      background-color: var(--color-white);
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
 
-            // Add active class to clicked tab and corresponding content
-            this.classList.add('active');
-            const tabId = this.getAttribute('data-tab');
-            document.getElementById(`${tabId}-tab`).classList.add('active');
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      height: 40px;
+    }
+
+    .logo h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--color-primary);
+      margin: 0;
+    }
+
+    .logo .danger {
+      color: var(--color-danger);
+    }
+
+    .navbar {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      padding-bottom: 5px;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .navbar a.active,
+    .navbar a:hover {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .navbar a span.material-icons-sharp {
+      font-size: 20px;
+    }
+
+    /* Hide profile-btn and theme-toggler for now */
+    #profile-btn, .theme-toggler {
+      display: none;
+    }
+
+    /* Modal container */
+    #settingsModal {
+      position: fixed;
+      top: 60px; /* below header */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      z-index: 100;
+      /* Initially visible for demo */
+      display: flex;
+    }
+
+    /* Modal content */
+    .settings-content {
+      background: var(--color-white);
+      border-radius: 8px;
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Close button */
+    #closeSettings {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+      transition: color 0.3s;
+    }
+
+    #closeSettings:hover {
+      color: var(--color-danger);
+    }
+
+    /* Modal header */
+    .settings-content h2 {
+      color: var(--color-primary);
+      margin: 0 0 1.5rem 0;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* Tabs */
+    .settings-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .settings-tab {
+      cursor: pointer;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+      border-bottom: 3px solid transparent;
+      color: #666;
+      transition: border-color 0.3s, color 0.3s;
+    }
+
+    .settings-tab.active {
+      border-bottom-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* Tab content */
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Form styling */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"] {
+      padding: 0.5rem 0.75rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="date"]:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 6px rgba(78, 115, 223, 0.4);
+    }
+
+    /* Profile photo upload */
+    .profile-photo-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .profile-preview {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-primary);
+      background: #eee;
+    }
+
+    .photo-upload-btn {
+      background-color: var(--color-primary);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .photo-upload-btn:hover {
+      background-color: #3b5acb;
+    }
+
+    .photo-url-input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      transition: border-color 0.3s;
+    }
+
+    .photo-url-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 6px rgba(78, 115, 223, 0.4);
+    }
+
+    /* Save button */
+    .save-btn {
+      background-color: var(--color-primary);
+      border: none;
+      color: white;
+      font-weight: 700;
+      padding: 0.75rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 0.5rem;
+    }
+
+    .save-btn:hover {
+      background-color: #3b5acb;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .settings-content {
+        padding: 1.5rem 1rem;
+      }
+
+      .settings-tabs {
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="./images/logo.png" alt="Logo" />
+    <h2>Study<span class="danger">Pulse</span></h2>
+  </div>
+  <div class="navbar">
+    <a href="dashboard.html"><span class="material-icons-sharp">home</span><h3>Home</h3></a>
+    <a href="timetable.html"><span class="material-icons-sharp">today</span><h3>Class</h3></a>
+    <a href="grades.html"><span class="material-icons-sharp">grid_view</span><h3>Courses</h3></a>
+    <a href="#" class="active" id="openSettings"><span class="material-icons-sharp">settings</span><h3>Settings</h3></a>
+    <a href="index.html" id="logout-link"><span class="material-icons-sharp">logout</span><h3>Logout</h3></a>
+  </div>
+</header>
+
+<div id="settingsModal">
+  <div class="settings-content">
+    <span id="closeSettings" title="Close">&times;</span>
+    <h2>Account Settings</h2>
+
+    <div class="settings-tabs">
+      <div class="settings-tab active" data-tab="profile">Profile</div>
+      <div class="settings-tab" data-tab="password">Password</div>
+    </div>
+
+    <!-- Profile Tab -->
+    <div id="profile-tab" class="tab-content active">
+      <form id="profileForm">
+        <div class="profile-photo-upload">
+          <img id="profilePreview" class="profile-preview" src="./images/profile-1.jpg" alt="Profile Preview" />
+          <input type="file" id="photoUpload" accept="image/*" style="display:none;" />
+          <button type="button" class="photo-upload-btn" onclick="document.getElementById('photoUpload').click()">Upload Photo</button>
+          <input
+            type="text"
+            id="photoUrl"
+            placeholder="Or enter photo URL"
+            class="photo-url-input"
+          />
+        </div>
+
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" name="firstName" required />
+
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" name="lastName" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" name="dob" />
+
+        <label for="contact">Contact</label>
+        <input type="text" id="contact" name="contact" />
+
+        <label for="course">Course</label>
+        <input type="text" id="course" name="course" />
+
+        <label for="address">Address</label>
+        <input type="text" id="address" name="address" />
+
+        <button type="submit" class="save-btn">Save Profile</button>
+      </form>
+    </div>
+
+    <!-- Password Tab -->
+    <div id="password-tab" class="tab-content">
+      <form id="passwordForm">
+        <label for="currentpass">Current Password</label>
+        <input type="password" id="currentpass" name="currentpass" required />
+
+        <label for="newpass">New Password</label>
+        <input type="password" id="newpass" name="newpass" required />
+
+        <label for="confirmpass">Confirm New Password</label>
+        <input type="password" id="confirmpass" name="confirmpass" required />
+
+        <button type="submit" class="save-btn">Change Password</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const userKey = "user";
+    const userData = JSON.parse(localStorage.getItem(userKey)) || {};
+
+    const $ = (id) => document.getElementById(id);
+
+    // Tabs functionality
+    const tabs = document.querySelectorAll(".settings-tab");
+    const tabContents = document.querySelectorAll(".tab-content");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        tabContents.forEach(tc => {
+          tc.classList.remove("active");
+          if(tc.id === tab.dataset.tab + "-tab") {
+            tc.classList.add("active");
+          }
         });
+      });
     });
 
-    // Handle photo upload
-    document.getElementById('photoUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                document.getElementById('profilePreview').src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
+    // Populate profile form with stored data
+    function populateProfileForm(data) {
+      $("firstName").value = data.firstName || "";
+      $("lastName").value = data.lastName || "";
+      $("email").value = data.email || "";
+      $("dob").value = data.dob || "";
+      $("contact").value = data.contact || "";
+      $("course").value = data.course || "";
+      $("address").value = data.address || "";
+      $("profilePreview").src = data.profilePhoto || "./images/profile-1.jpg";
+      $("photoUrl").value = data.profilePhoto || "";
+    }
+
+    // Populate on load
+    populateProfileForm(userData);
+
+    // Sync profile photo preview on URL input
+    $("photoUrl").addEventListener("input", () => {
+      const url = $("photoUrl").value.trim();
+      $("profilePreview").src = url || "./images/profile-1.jpg";
     });
 
-    // Handle photo URL input
-    document.getElementById('photoUrl').addEventListener('change', function() {
-        const url = this.value.trim();
-        if (url) {
-            document.getElementById('profilePreview').src = url;
-        }
+    // Upload photo preview
+    $("photoUpload").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = evt => {
+          $("profilePreview").src = evt.target.result;
+          $("photoUrl").value = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
-    // Save profile data
-    document.getElementById('profileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Save profile form
+    $("profileForm").addEventListener("submit", e => {
+      e.preventDefault();
 
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('email').value;
-        const dob = document.getElementById('dob').value;
-        const contact = document.getElementById('contact').value;
-        const course = document.getElementById('course').value;
-        const address = document.getElementById('address').value;
-        const profilePhoto = document.getElementById('profilePreview').src;
+      const updatedUser = {
+        ...userData,
+        firstName: $("firstName").value.trim(),
+        lastName: $("lastName").value.trim(),
+        email: $("email").value.trim().toLowerCase(),
+        dob: $("dob").value,
+        contact: $("contact").value.trim(),
+        course: $("course").value.trim(),
+        address: $("address").value.trim(),
+        profilePhoto: $("photoUrl").value.trim() || "./images/profile-1.jpg",
+      };
 
-        // Save to localStorage
-        localStorage.setItem('user_firstname', firstName);
-        localStorage.setItem('user_lastname', lastName);
-        localStorage.setItem('user_email', email);
-        localStorage.setItem('user_dob', dob);
-        localStorage.setItem('user_contact', contact);
-        localStorage.setItem('user_course', course);
-        localStorage.setItem('user_address', address);
-        localStorage.setItem('user_profile_photo', profilePhoto);
-
-        // Update profile display
-        loadProfileData();
-
-        alert('Profile updated successfully!');
+      localStorage.setItem(userKey, JSON.stringify(updatedUser));
+      alert("Profile updated successfully!");
     });
 
-    // Handle password change
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Password form submit
+    $("passwordForm").addEventListener("submit", e => {
+      e.preventDefault();
 
-        const currentPass = document.getElementById('currentpass').value;
-        const newPass = document.getElementById('newpass').value;
-        const confirmPass = document.getElementById('confirmpass').value;
+      const currentPass = $("currentpass").value;
+      const newPass = $("newpass").value;
+      const confirmPass = $("confirmpass").value;
 
-        // Basic validation
-        if (newPass !== confirmPass) {
-            alert("New passwords don't match!");
-            return;
-        }
+      if (newPass !== confirmPass) {
+        alert("New password and confirm password do not match.");
+        return;
+      }
 
-        if (newPass.length < 8) {
-            alert("Password must be at least 8 characters long!");
-            return;
-        }
-
-        // In a real app, you would send this to the server
-        alert('Password changed successfully!');
-
-        // Clear the form
-        this.reset();
+      // Normally: verify currentPass, update password in backend/localstorage
+      alert("Password changed successfully!");
+      $("passwordForm").reset();
     });
 
-    // Optional: Add confirmation dialog for logout
-    document.getElementById('logout-link').addEventListener('click', function(e) {
-        if(!confirm('Are you sure you want to logout?')) {
-            e.preventDefault();
-        }
+    // Modal open & close handlers
+    $("openSettings").addEventListener("click", e => {
+      e.preventDefault();
+      $("settingsModal").style.display = "flex";
     });
-    </script>
+
+    $("closeSettings").addEventListener("click", () => {
+      $("settingsModal").style.display = "none";
+    });
+
+    // Initially show modal
+    $("settingsModal").style.display = "flex";
+  });
+</script>
+
 </body>
 </html>
