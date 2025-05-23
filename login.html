@@ -271,8 +271,7 @@
     </div>
   </div>
 
-  <script>
-const container = document.getElementById('container');
+  <script>const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
 const loginBtn = document.getElementById('login');
 const signupForm = document.getElementById('signup-form');
@@ -282,19 +281,18 @@ const loginForm = document.getElementById('login-form');
 const backendUrl = 'https://studypulse-zyb9.onrender.com/api/auth';
 
 registerBtn.addEventListener('click', () => {
-  container.classList.add('active');
+  container.classList.add('active'); // show signup form
 });
 
 loginBtn.addEventListener('click', () => {
-  container.classList.remove('active');
+  container.classList.remove('active'); // show login form
 });
 
 signupForm.addEventListener('submit', async e => {
   e.preventDefault();
 
-  // Make sure input names match expected keys: firstName, lastName, etc.
-  const firstName = signupForm.querySelector('input[name="firstName"]').value.trim();
-  const lastName = signupForm.querySelector('input[name="lastName"]').value.trim();
+  const firstName = signupForm.querySelector('input[name="first_name"]').value.trim();
+  const lastName = signupForm.querySelector('input[name="last_name"]').value.trim();
   const email = signupForm.querySelector('input[name="email"]').value.trim();
   const username = signupForm.querySelector('input[name="username"]').value.trim();
   const password = signupForm.querySelector('input[name="password"]').value;
@@ -314,9 +312,9 @@ signupForm.addEventListener('submit', async e => {
     }
 
     if (response.ok) {
-      alert('Registered successfully! Please login.');
-      signupForm.reset();
-      container.classList.remove('active');
+      // Signup success - redirect to dashboard
+      alert('Registered successfully! Redirecting to dashboard...');
+      window.location.href = 'dashboard.html';
     } else {
       alert('Signup error: ' + (data.message || 'Unknown error'));
     }
@@ -350,14 +348,19 @@ loginForm.addEventListener('submit', async e => {
       alert('Login successful! Redirecting...');
       window.location.href = 'dashboard.html';
     } else {
-      alert('Login error: ' + (data.message || 'Unknown error'));
+      if (data.message && data.message.toLowerCase().includes('no user')) {
+        // If no account found, automatically switch to signup form
+        alert('No account found. Please register.');
+        container.classList.add('active'); // show signup form
+      } else {
+        alert('Login error: ' + (data.message || 'Unknown error'));
+      }
     }
   } catch (err) {
     alert('Login failed: ' + err.message);
     console.error(err);
   }
 });
-
 
   </script>
 
