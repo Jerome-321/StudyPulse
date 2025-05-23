@@ -272,74 +272,35 @@
   </div>
 
   <script>
-     const container = document.getElementById('container');
-    const registerBtn = document.getElementById('register');
-    const loginBtn = document.getElementById('login');
-    const signupForm = document.getElementById('signup-form');
-    const loginForm = document.getElementById('login-form');
-    const backendUrl = 'https://studypulse-zyb9.onrender.com/api/auth';
+   signupForm.addEventListener('submit', async e => {
+  e.preventDefault();
 
-    registerBtn.addEventListener('click', () => {
-      container.classList.add('active');
+  const firstName = signupForm.querySelector('input[name="first_name"]').value;
+  const lastName = signupForm.querySelector('input[name="last_name"]').value;
+  const email = signupForm.querySelector('input[name="email"]').value;
+  const username = signupForm.querySelector('input[name="username"]').value;
+  const password = signupForm.querySelector('input[name="password"]').value;
+
+  try {
+    const response = await fetch(`${backendUrl}/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName, email, username, password }),
     });
 
-    loginBtn.addEventListener('click', () => {
+    const data = await response.json(); // This line caused the error
+    if (response.ok) {
+      alert('Registered successfully! Please login.');
+      signupForm.reset();
       container.classList.remove('active');
-    });
-
-    signupForm.addEventListener('submit', async e => {
-      e.preventDefault();
-
-      const firstName = signupForm.querySelector('input[name="first_name"]').value;
-      const lastName = signupForm.querySelector('input[name="last_name"]').value;
-      const email = signupForm.querySelector('input[name="email"]').value;
-      const username = signupForm.querySelector('input[name="username"]').value;
-      const password = signupForm.querySelector('input[name="password"]').value;
-
-      try {
-        const response = await fetch(`${backendUrl}/signup`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ firstName, lastName, email, username, password }),
-        });
-
-        if (response.ok) {
-          alert('Registered successfully! Please login.');
-          signupForm.reset();
-          container.classList.remove('active');
-        } else {
-          const data = await response.json();
-          alert('Signup error: ' + data.message);
-        }
-      } catch (err) {
-        alert('Network error: ' + err.message);
-      }
-    });
-
-    loginForm.addEventListener('submit', async e => {
-      e.preventDefault();
-
-      const email = loginForm.querySelector('input[name="email"]').value;
-      const password = loginForm.querySelector('input[name="password"]').value;
-
-      try {
-        const response = await fetch(`${backendUrl}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-
-        if (response.ok) {
-          alert('Login successful! Redirecting...');
-          window.location.href = 'dashboard.html';  
-        } else {
-          const data = await response.json();
-          alert('Login error: ' + data.message);
-        }
-      } catch (err) {
-        alert('Network error: ' + err.message);
-      }
-    });
+    } else {
+      alert('Signup error: ' + data.message);
+    }
+  } catch (err) {
+    alert('Signup failed. Please check the console.');
+    console.error('Signup error:', err);
+  }
+});  
   </script>
 
 </body>
