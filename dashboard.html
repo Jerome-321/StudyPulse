@@ -243,17 +243,27 @@
     </header>
 
     <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h2>Account Settings</h2>
-                <span class="material-icons-sharp close-settings" id="closeSettings">close</span>
-            </div>
+    <form id="profileForm">
+    <label for="firstName">First Name</label>
+    <input type="text" id="firstName" required />
 
-            <div class="settings-tabs">
-                <div class="settings-tab active" data-tab="profile">Profile</div>
-                <div class="settings-tab" data-tab="password">Password</div>
-            </div>
+    <label for="lastName">Last Name</label>
+    <input type="text" id="lastName" required />
+
+    <label for="dob">Date of Birth</label>
+    <input type="date" id="dob" />
+
+    <label for="contact">Contact Number</label>
+    <input type="tel" id="contact" />
+
+    <label for="email">Email</label>
+    <input type="email" id="email" required />
+
+    <label for="course">Course</label>
+    <select id="course">
+        <option value="">Select Course</option>
+        <option value="Computer Science">Computer Science</option>
+        <option value="Engineering">Engineering</option>
 
             <!-- Profile Tab -->
             <div class="tab-content active" id="profile-tab">
