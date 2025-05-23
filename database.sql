@@ -11,7 +11,7 @@ CREATE TABLE users (
 
 CREATE TABLE grades (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
-    user_id INT(11) NOT NULL,
+    user_id INT(11) NOT NULL FOREIGN KEY,
     course VARCHAR(255) NOT NULL,
     prelim INT(11),
     midterm INT(11),
