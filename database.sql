@@ -5,7 +5,7 @@ CREATE TABLE users (
   email TEXT UNIQUE,
   username TEXT UNIQUE,
   password TEXT,
-  name TEXT, -- optional if you're using 'name' elsewhere
+  name TEXT,
   profile_picture TEXT
 );
 
