@@ -1,585 +1,170 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link rel="shortcut icon" href="./images/logo.png">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Settings Modal Styles */
-        .settings-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .settings-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .settings-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .settings-header h2 {
-            color: var(--color-primary);
-        }
-
-        .close-settings {
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-
-        .settings-tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .settings-tab {
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .settings-tab.active {
-            border-bottom: 2px solid var(--color-primary);
-            color: var(--color-primary);
-            font-weight: 500;
-        }
-
-        .settings-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .password-form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input, 
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .profile-photo-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            grid-column: span 2;
-            margin-bottom: 1rem;
-        }
-
-        .profile-preview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 1rem;
-            border: 3px solid var(--color-primary);
-        }
-
-        .photo-upload-btn {
-            padding: 0.5rem 1rem;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .save-btn {
-            grid-column: span 2;
-            padding: 0.8rem;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            margin-top: 1rem;
-        }
-
-        .photo-url-input {
-            width: 100%;
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .password-requirements {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-
-        /* Password Change Form Styles */
-        .change-password-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .change-password-container .box {
-            padding: 0.5rem 0;
-        }
-
-        .change-password-container .box p {
-            line-height: 2;
-            color: var(--color-dark-variant);
-        }
-
-        .change-password-container h2+p {
-            margin: 0.4rem 0 1.2rem 0;
-            color: var(--color-dark-variant);
-        }
-
-        .btn {
-            background: none;
-            border: none;
-            border: 2px solid var(--color-primary) !important;
-            border-radius: var(--border-radius-1);
-            padding: 0.5rem 1rem;
-            color: var(--color-white);
-            background-color: var(--color-primary);
-            cursor: pointer;
-            margin: 1rem 1.5rem 1rem 0;
-            margin-top: 1.5rem;
-        }
-
-        .btn:hover {
-            color: var(--color-primary);
-            background-color: transparent;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard</title>
+  <link rel="shortcut icon" href="./images/logo.png" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <div class="logo" title="StudyPulse">
-            <img src="./images/logo.png" alt="">
-            <h2>Study<span class="danger">Pulse</span></h2>
-        </div>
-        <div class="navbar">
-            <a href="dashboard.html" class="active">
-                <span class="material-icons-sharp">home</span>
-                <h3>Home</h3>
-            </a>
-            <a href="timetable.html" onclick="timeTableAll()">
-                <span class="material-icons-sharp">today</span>
-                <h3>Class</h3>
-            </a> 
-            <a href="grades.html">
-                <span class="material-icons-sharp">grid_view</span>
-                <h3>Courses</h3>
-            </a>
-            <a href="#" id="openSettings">
-                <span class="material-icons-sharp">settings</span>
-                <h3>Settings</h3>
-            </a>
-            <a href="index.html" id="logout-link">
-                <span class="material-icons-sharp">logout</span>
-                <h3>Logout</h3>
-            </a>
-        </div>
-        <div id="profile-btn">
-            <span class="material-icons-sharp">person</span>
-        </div>
-        <div class="theme-toggler">
-            <span class="material-icons-sharp active">light_mode</span>
-            <span class="material-icons-sharp">dark_mode</span>
-        </div>
-    </header>
-
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h2>Account Settings</h2>
-                <span class="material-icons-sharp close-settings" id="closeSettings">close</span>
-            </div>
-
-            <div class="settings-tabs">
-                <div class="settings-tab active" data-tab="profile">Profile</div>
-                <div class="settings-tab" data-tab="password">Password</div>
-            </div>
-
-            <!-- Profile Tab -->
-            <div class="tab-content active" id="profile-tab">
-                <form class="settings-form" id="profileForm">
-                    <div class="profile-photo-upload">
-                        <img id="profilePreview" src="./images/profile-1.jpg" alt="Profile Photo" class="profile-preview">
-                        <input type="file" id="photoUpload" accept="image/*" style="display: none;">
-                        <button type="button" class="photo-upload-btn" onclick="document.getElementById('photoUpload').click()">Upload Photo</button>
-                        <input type="text" id="photoUrl" class="photo-url-input" placeholder="Or enter image URL">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dob">Date of Birth</label>
-                        <input type="date" id="dob">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contact">Contact Number</label>
-                        <input type="tel" id="contact">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="course">Course</label>
-                        <select id="course">
-                            <option value="">Select Course</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Business">Business</option>
-                            <option value="Arts">Arts</option>
-                            <option value="Science">Science</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="address">Address</label>
-                        <input type="text" id="address">
-                    </div>
-
-                    <button type="submit" class="save-btn">Save Profile Changes</button>
-                </form>
-            </div>
-
-            <!-- Password Tab -->
-            <div class="tab-content" id="password-tab">
-                <form class="password-form" id="passwordForm">
-                    <h2>Create new password</h2>
-                    <p class="text-muted">Your new password must be different from previous used passwords.</p>
-
-                    <div class="box">
-                        <p class="text-muted">Current Password</p>
-                        <input type="password" id="currentpass" required>
-                    </div>
-
-                    <div class="box">
-                        <p class="text-muted">New Password</p>
-                        <input type="password" id="newpass" required>
-                        <p class="password-requirements">Minimum 8 characters with at least one number and one special character</p>
-                    </div>
-
-                    <div class="box">
-                        <p class="text-muted">Confirm Password</p>
-                        <input type="password" id="confirmpass" required>
-                    </div>
-
-                    <div class="button">
-                        <button type="submit" class="btn">Save</button>
-                        <a href="#" id="cancelPassword" class="text-muted">Cancel</a>
-                    </div>
-
-                    <a href="#" id="forgotPassword"><p>Forgot password?</p></a>
-                </form>
-            </div>
-        </div>
+  <header>
+    <div class="logo">
+      <img src="./images/logo.png" alt="Logo" />
+      <h2>Study<span class="danger">Pulse</span></h2>
     </div>
-
-    <div class="container">
-        <aside>
-<div class="profile">
-  <div class="top">
-    <div class="profile-photo">
-      <img id="currentProfilePhoto" src="./images/profile-1.jpg" alt="">
+    <div class="navbar">
+      <a href="dashboard.html" class="active"><span class="material-icons-sharp">home</span><h3>Home</h3></a>
+      <a href="timetable.html"><span class="material-icons-sharp">today</span><h3>Class</h3></a>
+      <a href="grades.html"><span class="material-icons-sharp">grid_view</span><h3>Courses</h3></a>
+      <a href="Settings.html" id="openSettings"><span class="material-icons-sharp">settings</span><h3>Settings</h3></a>
+      <a href="index.html" id="logout-link"><span class="material-icons-sharp">logout</span><h3>Logout</h3></a>
     </div>
-    <div class="info">
-      <p id="profileName">Name</p>
-      <small class="text-muted" id="profileId">12102030</small> <!-- Added id for user ID or similar -->
+    <div id="profile-btn"><span class="material-icons-sharp">person</span></div>
+    <div class="theme-toggler">
+      <span class="material-icons-sharp active">light_mode</span>
+      <span class="material-icons-sharp">dark_mode</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside>
+      <div class="profile">
+        <div class="top">
+          <div class="profile-photo">
+            <img id="currentProfilePhoto" src="./images/profile-1.jpg" alt="Profile Photo" />
+          </div>
+          <div class="info">
+            <p id="profileName">Name</p>
+            <small id="profileId">12102030</small>
+          </div>
+        </div>
+        <div class="about">
+          <h5>Course</h5><p id="profileCourse">N/A</p>
+          <h5>Date Of Birth</h5><p id="profileDob">N/A</p>
+          <h5>Contact</h5><p id="profileContact">N/A</p>
+          <h5>Email</h5><p id="profileEmail">N/A</p>
+          <h5>Address</h5><p id="profileAddress">N/A</p>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <h1>Grades</h1>
+      <div class="subjects" id="dynamic-grades"></div>
+
+      <div class="timetable" id="timetable">
+        <div>
+          <span id="prevDay">&lt;</span>
+          <h2>Today's Timetable</h2>
+          <span id="nextDay">&gt;</span>
+        </div>
+        <span class="closeBtn" onclick="timeTableAll()">X</span>
+        <table>
+          <thead>
+            <tr><th>Time</th><th>Room No.</th><th>Subject</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+
+    <div class="right">
+      <div class="calendar">
+        <h2 class="calendar-date">May 1, 2025</h2>
+        <div class="calendar-entry">
+          <div class="date-icon">📅</div>
+          <div class="details">
+            <h3>Labor Day (PH)</h3>
+            <small>Public Holiday</small>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="about">
-    <h5>Course</h5>
-    <p id="profileCourse"></p>
-    <h5>Date Of Birth</h5>
-    <p id="profileDob">29-Feb-2020</p>
-    <h5>Contact</h5>
-    <p id="profileContact">1234567890</p>
-    <h5>Email</h5>
-    <p id="profileEmail">unknown@gmail.com</p>
-    <h5>Address</h5>
-    <p id="profileAddress">dsad</p>
-  </div>
-</div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const userKey = "user";
+      let user = JSON.parse(localStorage.getItem(userKey));
 
-        </aside>
+      if (!user) {
+        alert("No user found. Redirecting to login...");
+        window.location.href = "login.html";
+        return;
+      }
 
-        <main>
-            <h1>Grades</h1>
-            <div class="subjects" id="dynamic-grades">
-                <!-- Dynamic content will be inserted here by JavaScript -->
-            </div>
+      const $ = (id) => document.getElementById(id);
+      const updateProfileDisplay = (data) => {
+        $("profileName").textContent = `${data.firstName || ""} ${data.lastName || ""}`;
+        $("profileCourse").textContent = data.course || "Not provided";
+        $("profileDob").textContent = data.dob || "Not provided";
+        $("profileContact").textContent = data.contact || "Not provided";
+        $("profileEmail").textContent = data.email || "Not provided";
+        $("profileAddress").textContent = data.address || "Not provided";
+        $("currentProfilePhoto").src = data.profilePhoto || "./images/profile-1.jpg";
+      };
 
-            <div class="timetable" id="timetable">
-                <div>
-                    <span id="prevDay">&lt;</span>
-                    <h2>Today's Timetable</h2>
-                    <span id="nextDay">&gt;</span>
-                </div>
-                <span class="closeBtn" onclick="timeTableAll()">X</span>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Room No.</th>
-                            <th>Subject</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <div id="Subjects" class="subjects"></div>
-            </div>
-        </main>
+      const fillSettingsForm = (data) => {
+        $("firstName").value = data.firstName || "";
+        $("lastName").value = data.lastName || "";
+        $("email").value = data.email || "";
+        $("dob").value = data.dob || "";
+        $("contact").value = data.contact || "";
+        $("course").value = data.course || "";
+        $("address").value = data.address || "";
+        $("profilePreview").src = data.profilePhoto || "./images/profile-1.jpg";
+        $("photoUrl").value = data.profilePhoto || "";
+      };
 
-        <div class="right">
-            <div class="calendar">
-                <h2 class="calendar-date">May 1, 2025</h2>
-                <div class="calendar-entry">
-                    <div class="date-icon">📅</div>
-                    <div class="details">
-                        <h3>Labor Day (PH)</h3>
-                        <small class="text-muted">Public Holiday</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+      updateProfileDisplay(user);
+      fillSettingsForm(user);
 
-    <script src="timeTable.js"></script>
-    <script src="app.js"></script>
-    <!-- Inside your dashboard.html -->
-<script>
- document.addEventListener("DOMContentLoaded", () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+      $("photoUrl").addEventListener("input", () => {
+        $("profilePreview").src = $("photoUrl").value || "./images/profile-1.jpg";
+      });
 
-  if (!user) {
-    alert("No user found. Please login first.");
-    window.location.href = "login.html"; // or login page
-    return;
-  }
+      $("photoUpload").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            $("profilePreview").src = event.target.result;
+            $("photoUrl").value = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
 
-  // Populate profile fields
-  document.getElementById("profile-name").textContent = `${user.firstName} ${user.lastName}`;
-  document.getElementById("profile-email").textContent = user.email;
-  document.getElementById("profile-username").textContent = user.username;
-});
+      $("profileForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        user = {
+          ...user,
+          firstName: $("firstName").value,
+          lastName: $("lastName").value,
+          email: $("email").value.toLowerCase(),
+          dob: $("dob").value,
+          contact: $("contact").value,
+          course: $("course").value,
+          address: $("address").value,
+          profilePhoto: $("photoUrl").value || "./images/profile-1.jpg",
+        };
+        localStorage.setItem(userKey, JSON.stringify(user));
+        updateProfileDisplay(user);
+        alert("Profile updated successfully!");
+        $("settingsModal").style.display = "none";
+      });
 
+      $("openSettings").addEventListener("click", () => {
+        $("settingsModal").style.display = "flex";
+      });
 
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Retrieve user object from localStorage
-  const user = JSON.parse(localStorage.getItem("user"));
+      $("closeSettings").addEventListener("click", () => {
+        $("settingsModal").style.display = "none";
+      });
+    });
+  </script>
+</body>
+</html>
 
-  if (!user) {
-    alert("No user logged in! Redirecting to login page.");
-    window.location.href = "login.html";
-    return;
-  }
-
-  // Populate profile fields with user data (add fallback for missing fields)
-  document.getElementById("profileName").textContent = `${user.firstName || ""} ${user.lastName || ""}`;
-  
-  // Example: Assuming you stored these fields during signup (if not, defaults will be empty)
-  document.getElementById("profileCourse").textContent = user.course || "Not provided";
-  document.getElementById("profileDob").textContent = user.dob || "Not provided";
-  document.getElementById("profileContact").textContent = user.contact || "Not provided";
-  document.getElementById("profileEmail").textContent = user.email || "Not provided";
-  document.getElementById("profileAddress").textContent = user.address || "Not provided";
-
-  // Optional: if you stored a profile photo URL during signup
-  if(user.profilePhoto) {
-    document.getElementById("currentProfilePhoto").src = user.profilePhoto;
-  }
-});
-ocument.addEventListener("DOMContentLoaded", () => {
-  const userKey = "user";
-
-  // Elements for profile display
-  const profileName = document.getElementById("profileName");
-  const profileCourse = document.getElementById("profileCourse");
-  const profileDob = document.getElementById("profileDob");
-  const profileContact = document.getElementById("profileContact");
-  const profileEmail = document.getElementById("profileEmail");
-  const profileAddress = document.getElementById("profileAddress");
-  const currentProfilePhoto = document.getElementById("currentProfilePhoto");
-
-  // Elements for settings form inputs
-  const profileForm = document.getElementById("profileForm");
-  const firstNameInput = document.getElementById("firstName");
-  const lastNameInput = document.getElementById("lastName");
-  const dobInput = document.getElementById("dob");
-  const contactInput = document.getElementById("contact");
-  const emailInput = document.getElementById("email");
-  const courseSelect = document.getElementById("course");
-  const addressInput = document.getElementById("address");
-  const profilePreview = document.getElementById("profilePreview");
-  const photoUrlInput = document.getElementById("photoUrl");
-
-  // Load user from localStorage
-  let user = JSON.parse(localStorage.getItem(userKey));
-
-  if (!user) {
-    alert("No user found! Redirecting to login...");
-    window.location.href = "login.html";
-    return;
-  }
-
-  // Function to update profile display
-  function updateProfileDisplay(data) {
-    profileName.textContent = `${data.firstName || ""} ${data.lastName || ""}`;
-    profileCourse.textContent = data.course || "Not provided";
-    profileDob.textContent = data.dob || "Not provided";
-    profileContact.textContent = data.contact || "Not provided";
-    profileEmail.textContent = data.email || "Not provided";
-    profileAddress.textContent = data.address || "Not provided";
-    currentProfilePhoto.src = data.profilePhoto || "./images/profile-1.jpg";
-  }
-
-  // Function to fill settings form inputs
-  function fillSettingsForm(data) {
-    firstNameInput.value = data.firstName || "";
-    lastNameInput.value = data.lastName || "";
-    dobInput.value = data.dob || "";
-    contactInput.value = data.contact || "";
-    emailInput.value = data.email || "";
-    courseSelect.value = data.course || "";
-    addressInput.value = data.address || "";
-    profilePreview.src = data.profilePhoto || "./images/profile-1.jpg";
-    photoUrlInput.value = data.profilePhoto || "";
-  }
-
-  // Initialize UI with loaded user data
-  updateProfileDisplay(user);
-  fillSettingsForm(user);
-
-  // Listen for changes on photo URL input to update preview
-  photoUrlInput.addEventListener("input", () => {
-    const url = photoUrlInput.value.trim();
-    profilePreview.src = url || "./images/profile-1.jpg";
-  });
-
-  // Listen for file upload and update preview & input
-  const photoUpload = document.getElementById("photoUpload");
-  photoUpload.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      profilePreview.src = event.target.result;
-      photoUrlInput.value = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Handle form submission
-  profileForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // Update user object with form values
-    user.firstName = firstNameInput.value.trim();
-    user.lastName = lastNameInput.value.trim();
-    user.dob = dobInput.value;
-    user.contact = contactInput.value.trim();
-    user.email = emailInput.value.trim().toLowerCase();
-    user.course = courseSelect.value;
-    user.address = addressInput.value.trim();
-    user.profilePhoto = photoUrlInput.value.trim() || "./images/profile-1.jpg";
-
-    // Save back to localStorage
-    localStorage.setItem(userKey, JSON.stringify(user));
-
-    // Update profile display immediately
-    updateProfileDisplay(user);
-
-    alert("Profile updated successfully!");
-  });
-
-  // Optional: you can add code to handle modal open/close here as well.
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const userKey = "user";
-  const user = JSON.parse(localStorage.getItem(userKey));
-
-  if (!user) {
-    alert("No user logged in! Redirecting to login page.");
-    window.location.href = "login.html";
-    return;
-  }
-
-  // Profile display elements
-  const profileName = document.getElementById("profileName");
-  const profileCourse = document.getElementById("profileCourse");
-  const profileDob = document.getElementById("profileDob");
-  const profileContact = document.getElementById("profileContact");
-  const profileEmail = document.getElementById("profileEmail");
-  const prof
