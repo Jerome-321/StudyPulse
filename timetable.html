@@ -343,8 +343,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function renderTimetable(entries) {
-        tbody.innerHTML = '';
-        (entries || []).forEach((entry, idx) => {
+    const tbody = document.querySelector('#timetable tbody');
+    tbody.innerHTML = '';
+    if (entries && entries.length > 0) {
+        document.getElementById('timetable').style.display = 'block'; // SHOW timetable
+        entries.forEach((entry, idx) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${entry.time}</td>
@@ -355,8 +358,10 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             tbody.appendChild(tr);
         });
+    } else {
+        document.getElementById('timetable').style.display = 'none'; // HIDE timetable if empty
     }
-
+}
     // Remove entry
     window.removeEntry = function(idx) {
         fetch('save_timetable.php?action=remove', {
