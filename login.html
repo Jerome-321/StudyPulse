@@ -272,15 +272,13 @@
   </div>
 
   <script>
-   // === FRONTEND SCRIPT (fix.js) ===
-
 const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
 const loginBtn = document.getElementById('login');
 const signupForm = document.getElementById('signup-form');
 const loginForm = document.getElementById('login-form');
 
-// ✅ CHANGE THIS: Replace with your actual backend URL
+// Update this with your actual backend URL
 const backendUrl = 'https://studypulse-zyb9.onrender.com/api/auth';
 
 registerBtn.addEventListener('click', () => {
@@ -294,10 +292,11 @@ loginBtn.addEventListener('click', () => {
 signupForm.addEventListener('submit', async e => {
   e.preventDefault();
 
-  const firstName = signupForm.querySelector('input[name="first_name"]').value;
-  const lastName = signupForm.querySelector('input[name="last_name"]').value;
-  const email = signupForm.querySelector('input[name="email"]').value;
-  const username = signupForm.querySelector('input[name="username"]').value;
+  // Make sure input names match expected keys: firstName, lastName, etc.
+  const firstName = signupForm.querySelector('input[name="firstName"]').value.trim();
+  const lastName = signupForm.querySelector('input[name="lastName"]').value.trim();
+  const email = signupForm.querySelector('input[name="email"]').value.trim();
+  const username = signupForm.querySelector('input[name="username"]').value.trim();
   const password = signupForm.querySelector('input[name="password"]').value;
 
   try {
@@ -310,7 +309,7 @@ signupForm.addEventListener('submit', async e => {
     let data;
     try {
       data = await response.json();
-    } catch (err) {
+    } catch {
       throw new Error('Server returned non-JSON response');
     }
 
@@ -319,7 +318,7 @@ signupForm.addEventListener('submit', async e => {
       signupForm.reset();
       container.classList.remove('active');
     } else {
-      alert('Signup error: ' + data.message);
+      alert('Signup error: ' + (data.message || 'Unknown error'));
     }
   } catch (err) {
     alert('Signup failed: ' + err.message);
@@ -330,7 +329,7 @@ signupForm.addEventListener('submit', async e => {
 loginForm.addEventListener('submit', async e => {
   e.preventDefault();
 
-  const email = loginForm.querySelector('input[name="email"]').value;
+  const email = loginForm.querySelector('input[name="email"]').value.trim();
   const password = loginForm.querySelector('input[name="password"]').value;
 
   try {
@@ -343,49 +342,20 @@ loginForm.addEventListener('submit', async e => {
     let data;
     try {
       data = await response.json();
-    } catch (err) {
+    } catch {
       throw new Error('Server returned non-JSON response');
     }
 
     if (response.ok) {
       alert('Login successful! Redirecting...');
-      window.location.href = 'dashboard.html'; 
+      window.location.href = 'dashboard.html';
     } else {
-      alert('Login error: ' + data.message);
+      alert('Login error: ' + (data.message || 'Unknown error'));
     }
   } catch (err) {
     alert('Login failed: ' + err.message);
     console.error(err);
   }
-});
-   
-async function signupUser(userData) {
-  try {
-    const response = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log('Signup success:', data);
-     
-    } else {
-      console.error('Signup error:', data.message);
-    
-    }
-  } catch (error) {
-    console.error('Network or server error:', error);
-  }
-}
-
-signupUser({
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john@example.com',
-  username: 'john123',
-  password: 'password123',
 });
 
 
