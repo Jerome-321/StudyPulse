@@ -176,7 +176,7 @@ input:focus {
                 <span class="material-icons-sharp">settings</span>
                 <h3>Settings</h3>
             </a>
-            <a href="index.html">
+            <a href="logout.php">
                 <span class="material-icons-sharp">logout</span>
                 <h3>Logout</h3>
             </a>
@@ -386,9 +386,7 @@ input:focus {
         }
     });
     </script>
-
-    <script>
-    // Grades logic (your original script)
+   <script>
     function addCourse() {
         let courseContainer = document.getElementById("course-list");
         let courseEntry = document.createElement("div");
@@ -428,7 +426,7 @@ input:focus {
         let savedCoursesContainer = document.getElementById("saved-courses-container");
         let savedCoursesDiv = document.getElementById("saved-courses");
         savedCoursesDiv.innerHTML = "";
-
+        
         let courses = JSON.parse(localStorage.getItem("courses")) || [];
         courses.forEach((course, index) => {
             let courseDiv = document.createElement("div");
@@ -475,7 +473,9 @@ input:focus {
         displaySavedCourses();
         alert("Courses updated successfully!");
     }
-         window.onload = displaySavedCourses;
+
+    // Display saved courses on page load
+    window.onload = displaySavedCourses;
     function saveCourses() {
     let courses = [];
         document.querySelectorAll(".course-entry").forEach(entry => {
@@ -512,10 +512,11 @@ courses.push({
 localStorage.setItem("courses", JSON.stringify(courses));
 
 
-    // Display saved courses on page load
-    window.onload = displaySavedCourses;
-    </script>
+</script>
 
-    <script src="app.js"></script>
+</body>
+
+<script src="app.js"></script>
+
 </body>
 </html>
