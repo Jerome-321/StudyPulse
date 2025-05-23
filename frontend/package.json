@@ -1,0 +1,14 @@
+{
+  "name": "studypulse-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "dependencies": {
+    "react": "...",
+    "react-dom": "...",
+    "react-scripts": "..."
+  }
+}
