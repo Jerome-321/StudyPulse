@@ -1,718 +1,335 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link rel="shortcut icon" href="./images/logo.png">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Settings Modal Styles */
-        .settings-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Register Page</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: whitesmoke;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
+            position: relative;
+            overflow: hidden;
+            width: 768px;
+            max-width: 100%;
+            min-height: 480px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .container p {
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.3px;
+            margin: 20px 0;
+        }
+
+        .container span {
+            font-size: 12px;
+        }
+
+        .container a {
+            color: white;
+            font-size: 13px;
+            text-decoration: none;
+            margin: 15px 0 10px;
+        }
+
+        .container button {
+            background-color: #4f46e5;
+            color: #fff;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .container button:hover {
+            background-color: #3e3bb3;
+        }
+
+        .container button.hidden {
+            background-color: transparent;
+            border-color: #fff;
+        }
+
+        .container form {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+        }
+
+        .container input {
+            background-color: #eee;
+            border: none;
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+            display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .settings-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
+        .sign-in {
+            left: 0;
+            width: 50%;
+            z-index: 2;
         }
 
-        .settings-header {
-            display: flex;
-            justify-content: space-between;
+        .container.active .sign-in {
+            transform: translateX(100%);
+        }
+
+        .sign-up {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.active .sign-up {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: move 0.6s;
+        }
+
+        @keyframes move {
+            0%,
+            49.99% {
+                opacity: 0;
+                z-index: 1;
+            }
+
+            50%,
+            100% {
+                opacity: 1;
+                z-index: 5;
+            }
+        }
+
+        .social-icons {
+            margin: 20px 0;
+        }
+
+        .social-icons a {
+            border: 1px solid #ccc;
+            border-radius: 20%;
+            display: inline-flex;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin: 0 3px;
+            width: 40px;
+            height: 40px;
+            transition: background-color 0.3s;
         }
 
-        .settings-header h2 {
-            color: var(--color-primary);
+        .social-icons a:hover {
+            background-color: #4f46e5;
+            color: white;
         }
 
-        .close-settings {
-            cursor: pointer;
-            font-size: 1.5rem;
+        .toggle-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: all 0.6s ease-in-out;
+            border-radius: 20px;
+            z-index: 1000;
         }
 
-        .settings-tabs {
+        .container.active .toggle-container {
+            transform: translateX(-100%);
+            border-radius: 20px;
+        }
+
+        .toggle {
+            background-color: #4f46e5;
+            height: 100%;
+            color: #fff;
+            position: relative;
+            left: -100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: all 0.6s ease-in-out;
+        }
+
+        .container.active .toggle {
+            transform: translateX(50%);
+        }
+
+        .toggle-panel {
+            position: absolute;
+            width: 50%;
+            height: 100%;
             display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .settings-tab {
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .settings-tab.active {
-            border-bottom: 2px solid var(--color-primary);
-            color: var(--color-primary);
-            font-weight: 500;
-        }
-
-        .settings-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .password-form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input, 
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .profile-photo-upload {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            grid-column: span 2;
-            margin-bottom: 1rem;
-        }
-
-        .profile-preview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 1rem;
-            border: 3px solid var(--color-primary);
-        }
-
-        .photo-upload-btn {
-            padding: 0.5rem 1rem;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .save-btn {
-            grid-column: span 2;
-            padding: 0.8rem;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            margin-top: 1rem;
-        }
-
-        .photo-url-input {
-            width: 100%;
-            margin-top: 0.5rem;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .password-requirements {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-
-        /* Password Change Form Styles */
-        .change-password-container {
-            display: flex;
+            justify-content: center;
             flex-direction: column;
-            gap: 1rem;
+            padding: 0 30px;
+            text-align: center;
+            top: 0;
+            transform: translateX(0);
+            transition: all 0.6s ease-in-out;
         }
 
-        .change-password-container .box {
-            padding: 0.5rem 0;
+        .toggle-left {
+            transform: translateX(-200%);
         }
 
-        .change-password-container .box p {
-            line-height: 2;
-            color: var(--color-dark-variant);
+        .container.active .toggle-left {
+            transform: translateX(0);
         }
 
-        .change-password-container h2+p {
-            margin: 0.4rem 0 1.2rem 0;
-            color: var(--color-dark-variant);
+        .toggle-right {
+            right: 0;
+            transform: translateX(0);
         }
-
-        .btn {
-            background: none;
-            border: none;
-            border: 2px solid var(--color-primary) !important;
-            border-radius: var(--border-radius-1);
-            padding: 0.5rem 1rem;
-            color: var(--color-white);
-            background-color: var(--color-primary);
-            cursor: pointer;
-            margin: 1rem 1.5rem 1rem 0;
-            margin-top: 1.5rem;
-        }
-
-        .btn:hover {
-            color: var(--color-primary);
-            background-color: transparent;
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <header>
-        <div class="logo" title="StudyPulse">
-            <img src="./images/logo.png" alt="">
-            <h2>Study<span class="danger">Pulse</span></h2>
-        </div>
-        <div class="navbar">
-            <a href="dashboard.html" class="active">
-                <span class="material-icons-sharp">home</span>
-                <h3>Home</h3>
-            </a>
-            <a href="timetable.html" onclick="timeTableAll()">
-                <span class="material-icons-sharp">today</span>
-                <h3>Class</h3>
-            </a> 
-            <a href="grades.html">
-                <span class="material-icons-sharp">grid_view</span>
-                <h3>Courses</h3>
-            </a>
-            <a href="#" id="openSettings">
-                <span class="material-icons-sharp">settings</span>
-                <h3>Settings</h3>
-            </a>
-            <a href="logout" id="logout-link">
-                <span class="material-icons-sharp">logout</span>
-                <h3>Logout</h3>
-            </a>
-        </div>
-        <div id="profile-btn">
-            <span class="material-icons-sharp">person</span>
-        </div>
-        <div class="theme-toggler">
-            <span class="material-icons-sharp active">light_mode</span>
-            <span class="material-icons-sharp">dark_mode</span>
-        </div>
-    </header>
 
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h2>Account Settings</h2>
-                <span class="material-icons-sharp close-settings" id="closeSettings">close</span>
-            </div>
-
-            <div class="settings-tabs">
-                <div class="settings-tab active" data-tab="profile">Profile</div>
-                <div class="settings-tab" data-tab="password">Password</div>
-            </div>
-
-            <!-- Profile Tab -->
-            <div class="tab-content active" id="profile-tab">
-                <form class="settings-form" id="profileForm">
-                    <div class="profile-photo-upload">
-                        <img id="profilePreview" src="./images/profile-1.jpg" alt="Profile Photo" class="profile-preview">
-                        <input type="file" id="photoUpload" accept="image/*" style="display: none;">
-                        <button type="button" class="photo-upload-btn" onclick="document.getElementById('photoUpload').click()">Upload Photo</button>
-                        <input type="text" id="photoUrl" class="photo-url-input" placeholder="Or enter image URL">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dob">Date of Birth</label>
-                        <input type="date" id="dob">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contact">Contact Number</label>
-                        <input type="tel" id="contact">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="course">Course</label>
-                        <select id="course">
-                            <option value="">Select Course</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Business">Business</option>
-                            <option value="Arts">Arts</option>
-                            <option value="Science">Science</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="address">Address</label>
-                        <input type="text" id="address">
-                    </div>
-
-                    <button type="submit" class="save-btn">Save Profile Changes</button>
-                </form>
-            </div>
-
-            <!-- Password Tab -->
-            <div class="tab-content" id="password-tab">
-                <form class="password-form" id="passwordForm">
-                    <h2>Create new password</h2>
-                    <p class="text-muted">Your new password must be different from previous used passwords.</p>
-
-                    <div class="box">
-                        <p class="text-muted">Current Password</p>
-                        <input type="password" id="currentpass" required>
-                    </div>
-
-                    <div class="box">
-                        <p class="text-muted">New Password</p>
-                        <input type="password" id="newpass" required>
-                        <p class="password-requirements">Minimum 8 characters with at least one number and one special character</p>
-                    </div>
-
-                    <div class="box">
-                        <p class="text-muted">Confirm Password</p>
-                        <input type="password" id="confirmpass" required>
-                    </div>
-
-                    <div class="button">
-                        <button type="submit" class="btn">Save</button>
-                        <a href="#" id="cancelPassword" class="text-muted">Cancel</a>
-                    </div>
-
-                    <a href="#" id="forgotPassword"><p>Forgot password?</p></a>
-                </form>
-            </div>
-        </div>
+  <div class="container" id="container">
+    <!-- Sign Up -->
+    <div class="form-container sign-up">
+     <form id="signup-form" class="signup-form">
+      <input type="text" name="firstName" placeholder="First Name" required />
+      <input type="text" name="lastName" placeholder="Last Name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Sign Up</button>
+      </form>
     </div>
 
-    <div class="container">
-        <aside>
-<div class="profile">
-  <div class="top">
-    <div class="profile-photo">
-      <img id="currentProfilePhoto" src="./images/profile-1.jpg" alt="">
+    <!-- Sign In -->
+    <div class="form-container sign-in">
+       <form id="login-form" class="login-form">
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+      </form>
     </div>
-    <div class="info">
-      <p id="profileName">Name</p>
-      <small class="text-muted" id="profileId">12102030</small> <!-- Added id for user ID or similar -->
+
+    <!-- Toggle Panel -->
+    <div class="toggle-container">
+      <div class="toggle">
+        <div class="toggle-panel toggle-left">
+          <h1>Welcome Back!</h1>
+          <p>Sign in with your email and password</p>
+          <button class="hidden" id="login">Sign In</button>
+        </div>
+        <div class="toggle-panel toggle-right">
+          <h1>StudyPulse!</h1>
+          <p>Register with your details to start</p>
+          <button class="hidden" id="register">Sign Up</button>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="about">
-    <h5>Course</h5>
-    <p id="profileCourse"></p>
-    <h5>Date Of Birth</h5>
-    <p id="profileDob">29-Feb-2020</p>
-    <h5>Contact</h5>
-    <p id="profileContact">1234567890</p>
-    <h5>Email</h5>
-    <p id="profileEmail">unknown@gmail.com</p>
-    <h5>Address</h5>
-    <p id="profileAddress">dsad</p>
-  </div>
-</div>
 
-        </aside>
+  <script>
+const container = document.getElementById('container');
+const registerBtn = document.getElementById('register');
+const loginBtn = document.getElementById('login');
+const signupForm = document.getElementById('signup-form');
+const loginForm = document.getElementById('login-form');
 
-        <main>
-            <h1>Grades</h1>
-            <div class="subjects" id="dynamic-grades">
-                <!-- Dynamic content will be inserted here by JavaScript -->
-            </div>
+registerBtn.addEventListener('click', () => {
+  container.classList.add('active');
+});
 
-            <div class="timetable" id="timetable">
-                <div>
-                    <span id="prevDay">&lt;</span>
-                    <h2>Today's Timetable</h2>
-                    <span id="nextDay">&gt;</span>
-                </div>
-                <span class="closeBtn" onclick="timeTableAll()">X</span>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Room No.</th>
-                            <th>Subject</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <div id="Subjects" class="subjects"></div>
-            </div>
-        </main>
+loginBtn.addEventListener('click', () => {
+  container.classList.remove('active');
+});
 
-        <div class="right">
-            <div class="calendar">
-                <h2 class="calendar-date">May 1, 2025</h2>
-                <div class="calendar-entry">
-                    <div class="date-icon">📅</div>
-                    <div class="details">
-                        <h3>Labor Day (PH)</h3>
-                        <small class="text-muted">Public Holiday</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+signupForm.addEventListener('submit', e => {
+  e.preventDefault();
 
-    <script src="timeTable.js"></script>
-    <script src="app.js"></script>
-    <!-- Inside your dashboard.html -->
-<script>
- document.addEventListener("DOMContentLoaded", () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = {
+    firstName: signupForm.firstName.value.trim(),
+    lastName: signupForm.lastName.value.trim(),
+    email: signupForm.email.value.trim().toLowerCase(),
+    username: signupForm.username.value.trim(),
+    password: signupForm.password.value,
+  };
 
-  if (!user) {
-    alert("No user found. Please login first.");
-    window.location.href = "login.html"; // or login page
+  // Save user in localStorage
+  localStorage.setItem('user', JSON.stringify(user));
+
+  alert("Registration successful! Please login.");
+  signupForm.reset();
+  container.classList.remove('active');
+});
+
+loginForm.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const email = loginForm.email.value.trim().toLowerCase();
+  const password = loginForm.password.value;
+
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+
+  if (!storedUser) {
+    alert("No account found. Please sign up.");
+    container.classList.add('active');
+    signupForm.email.value = email; // prefill email in signup form
     return;
   }
 
-  // Populate profile fields
-  document.getElementById("profile-name").textContent = `${user.firstName} ${user.lastName}`;
-  document.getElementById("profile-email").textContent = user.email;
-  document.getElementById("profile-username").textContent = user.username;
-});
-
-
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Retrieve user object from localStorage
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (!user) {
-    alert("No user logged in! Redirecting to login page.");
-    window.location.href = "login.html";
-    return;
-  }
-
-  // Populate profile fields with user data (add fallback for missing fields)
-  document.getElementById("profileName").textContent = `${user.firstName || ""} ${user.lastName || ""}`;
-  
-  // Example: Assuming you stored these fields during signup (if not, defaults will be empty)
-  document.getElementById("profileCourse").textContent = user.course || "Not provided";
-  document.getElementById("profileDob").textContent = user.dob || "Not provided";
-  document.getElementById("profileContact").textContent = user.contact || "Not provided";
-  document.getElementById("profileEmail").textContent = user.email || "Not provided";
-  document.getElementById("profileAddress").textContent = user.address || "Not provided";
-
-  // Optional: if you stored a profile photo URL during signup
-  if(user.profilePhoto) {
-    document.getElementById("currentProfilePhoto").src = user.profilePhoto;
+  if (storedUser.email === email && storedUser.password === password) {
+    alert("Login successful! Redirecting...");
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Account not found or incorrect password. Please try again or sign up.");
+    container.classList.add('active');
+    signupForm.email.value = email;
   }
 });
-ocument.addEventListener("DOMContentLoaded", () => {
-  const userKey = "user";
 
-  // Elements for profile display
-  const profileName = document.getElementById("profileName");
-  const profileCourse = document.getElementById("profileCourse");
-  const profileDob = document.getElementById("profileDob");
-  const profileContact = document.getElementById("profileContact");
-  const profileEmail = document.getElementById("profileEmail");
-  const profileAddress = document.getElementById("profileAddress");
-  const currentProfilePhoto = document.getElementById("currentProfilePhoto");
-
-  // Elements for settings form inputs
-  const profileForm = document.getElementById("profileForm");
-  const firstNameInput = document.getElementById("firstName");
-  const lastNameInput = document.getElementById("lastName");
-  const dobInput = document.getElementById("dob");
-  const contactInput = document.getElementById("contact");
-  const emailInput = document.getElementById("email");
-  const courseSelect = document.getElementById("course");
-  const addressInput = document.getElementById("address");
-  const profilePreview = document.getElementById("profilePreview");
-  const photoUrlInput = document.getElementById("photoUrl");
-
-  // Load user from localStorage
-  let user = JSON.parse(localStorage.getItem(userKey));
-
-  if (!user) {
-    alert("No user found! Redirecting to login...");
-    window.location.href = "login.html";
-    return;
-  }
-
-  // Function to update profile display
-  function updateProfileDisplay(data) {
-    profileName.textContent = `${data.firstName || ""} ${data.lastName || ""}`;
-    profileCourse.textContent = data.course || "Not provided";
-    profileDob.textContent = data.dob || "Not provided";
-    profileContact.textContent = data.contact || "Not provided";
-    profileEmail.textContent = data.email || "Not provided";
-    profileAddress.textContent = data.address || "Not provided";
-    currentProfilePhoto.src = data.profilePhoto || "./images/profile-1.jpg";
-  }
-
-  // Function to fill settings form inputs
-  function fillSettingsForm(data) {
-    firstNameInput.value = data.firstName || "";
-    lastNameInput.value = data.lastName || "";
-    dobInput.value = data.dob || "";
-    contactInput.value = data.contact || "";
-    emailInput.value = data.email || "";
-    courseSelect.value = data.course || "";
-    addressInput.value = data.address || "";
-    profilePreview.src = data.profilePhoto || "./images/profile-1.jpg";
-    photoUrlInput.value = data.profilePhoto || "";
-  }
-
-  // Initialize UI with loaded user data
-  updateProfileDisplay(user);
-  fillSettingsForm(user);
-
-  // Listen for changes on photo URL input to update preview
-  photoUrlInput.addEventListener("input", () => {
-    const url = photoUrlInput.value.trim();
-    profilePreview.src = url || "./images/profile-1.jpg";
-  });
-
-  // Listen for file upload and update preview & input
-  const photoUpload = document.getElementById("photoUpload");
-  photoUpload.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      profilePreview.src = event.target.result;
-      photoUrlInput.value = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Handle form submission
-  profileForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // Update user object with form values
-    user.firstName = firstNameInput.value.trim();
-    user.lastName = lastNameInput.value.trim();
-    user.dob = dobInput.value;
-    user.contact = contactInput.value.trim();
-    user.email = emailInput.value.trim().toLowerCase();
-    user.course = courseSelect.value;
-    user.address = addressInput.value.trim();
-    user.profilePhoto = photoUrlInput.value.trim() || "./images/profile-1.jpg";
-
-    // Save back to localStorage
-    localStorage.setItem(userKey, JSON.stringify(user));
-
-    // Update profile display immediately
-    updateProfileDisplay(user);
-
-    alert("Profile updated successfully!");
-  });
-
-  // Optional: you can add code to handle modal open/close here as well.
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const userKey = "user";
-  const user = JSON.parse(localStorage.getItem(userKey));
-
-  if (!user) {
-    alert("No user logged in! Redirecting to login page.");
-    window.location.href = "login.html";
-    return;
-  }
-
-  // Profile display elements
-  const profileName = document.getElementById("profileName");
-  const profileCourse = document.getElementById("profileCourse");
-  const profileDob = document.getElementById("profileDob");
-  const profileContact = document.getElementById("profileContact");
-  const profileEmail = document.getElementById("profileEmail");
-  const profileAddress = document.getElementById("profileAddress");
-  const currentProfilePhoto = document.getElementById("currentProfilePhoto");
-
-  // Settings form inputs
-  const profileForm = document.getElementById("profileForm");
-  const firstNameInput = document.getElementById("firstName");
-  const lastNameInput = document.getElementById("lastName");
-  const dobInput = document.getElementById("dob");
-  const contactInput = document.getElementById("contact");
-  const emailInput = document.getElementById("email");
-  const courseSelect = document.getElementById("course");
-  const addressInput = document.getElementById("address");
-  const profilePreview = document.getElementById("profilePreview");
-  const photoUrlInput = document.getElementById("photoUrl");
-  const photoUploadInput = document.getElementById("photoUpload");
-
-  // Settings modal and tabs
-  const settingsModal = document.getElementById("settingsModal");
-  const openSettingsBtn = document.getElementById("openSettings");
-  const closeSettingsBtn = document.getElementById("closeSettings");
-  const settingsTabs = document.querySelectorAll(".settings-tab");
-  const tabContents = document.querySelectorAll(".tab-content");
-
-  // Populate profile display
-  profileName.textContent = `${user.firstName || ""} ${user.lastName || ""}`.trim();
-  profileCourse.textContent = user.course || "Not provided";
-  profileDob.textContent = user.dob || "Not provided";
-  profileContact.textContent = user.contact || "Not provided";
-  profileEmail.textContent = user.email || "Not provided";
-  profileAddress.textContent = user.address || "Not provided";
-
-  if (user.profilePhoto) {
-    currentProfilePhoto.src = user.profilePhoto;
-  }
-
-  // Populate settings form inputs
-  firstNameInput.value = user.firstName || "";
-  lastNameInput.value = user.lastName || "";
-  dobInput.value = user.dob || "";
-  contactInput.value = user.contact || "";
-  emailInput.value = user.email || "";
-  courseSelect.value = user.course || "";
-  addressInput.value = user.address || "";
-  profilePreview.src = user.profilePhoto || "./images/profile-1.jpg";
-  photoUrlInput.value = user.profilePhoto || "";
-
-  // Open settings modal
-  openSettingsBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    settingsModal.style.display = "flex";
-  });
-
-  // Close settings modal
-  closeSettingsBtn.addEventListener("click", () => {
-    settingsModal.style.display = "none";
-  });
-
-  // Switch tabs inside settings modal
-  settingsTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      // Remove active class from all tabs and contents
-      settingsTabs.forEach(t => t.classList.remove("active"));
-      tabContents.forEach(c => c.classList.remove("active"));
-
-      // Add active class to clicked tab and corresponding content
-      tab.classList.add("active");
-      const target = tab.getAttribute("data-tab");
-      document.getElementById(`${target}-tab`).classList.add("active");
-    });
-  });
-
-  // Profile photo upload preview
-  photoUploadInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        profilePreview.src = ev.target.result;
-        photoUrlInput.value = "";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // Profile photo URL input preview
-  photoUrlInput.addEventListener("input", () => {
-    const url = photoUrlInput.value.trim();
-    if (url) {
-      profilePreview.src = url;
-      photoUploadInput.value = ""; // reset file input
-    }
-  });
-
-  // Save profile changes form submission
-  profileForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // Collect form data
-    const updatedUser = {
-      ...user,
-      firstName: firstNameInput.value.trim(),
-      lastName: lastNameInput.value.trim(),
-      dob: dobInput.value,
-      contact: contactInput.value.trim(),
-      email: emailInput.value.trim(),
-      course: courseSelect.value,
-      address: addressInput.value.trim(),
-      profilePhoto: profilePreview.src,
-    };
-
-    // Save updated user back to localStorage
-    localStorage.setItem(userKey, JSON.stringify(updatedUser));
-
-    // Update profile display on page
-    profileName.textContent = `${updatedUser.firstName} ${updatedUser.lastName}`.trim();
-    profileCourse.textContent = updatedUser.course || "Not provided";
-    profileDob.textContent = updatedUser.dob || "Not provided";
-    profileContact.textContent = updatedUser.contact || "Not provided";
-    profileEmail.textContent = updatedUser.email || "Not provided";
-    profileAddress.textContent = updatedUser.address || "Not provided";
-    currentProfilePhoto.src = updatedUser.profilePhoto;
-
-    alert("Profile changes saved!");
-
-    // Close modal
-    settingsModal.style.display = "none";
-  });
-
-});
-
-</script>
+  </script>
 
 </body>
 </html>
