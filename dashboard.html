@@ -737,6 +737,34 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </script> src="timeTable.js"></script>
     <script src="app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const timetableKey = "timetable"; // Key used for localStorage
+    const timetableSaveButton = document.getElementById("saveTimetableButton");
+    const timetableInput = document.getElementById("timetableInput"); // Assuming you have an input or textarea for timetable data
+
+    // Save timetable data
+    timetableSaveButton.addEventListener("click", () => {
+        const timetableData = timetableInput.value.trim(); // Get the value from the input/textarea
+
+        if (!timetableData) {
+            alert("Timetable cannot be empty!");
+            return;
+        }
+
+        // Save to localStorage
+        localStorage.setItem(timetableKey, timetableData);
+
+        alert("Timetable saved successfully!");
+    });
+
+    // Load timetable data on page load
+    const savedTimetable = localStorage.getItem(timetableKey);
+    if (savedTimetable) {
+        timetableInput.value = savedTimetable; // Populate the input/textarea with saved data
+    }
+});
+</script>
 </body>
 </html>
 
