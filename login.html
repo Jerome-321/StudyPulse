@@ -272,7 +272,26 @@
   </div>
 
   <script>
-   signupForm.addEventListener('submit', async e => {
+   // === FRONTEND SCRIPT (fix.js) ===
+
+const container = document.getElementById('container');
+const registerBtn = document.getElementById('register');
+const loginBtn = document.getElementById('login');
+const signupForm = document.getElementById('signup-form');
+const loginForm = document.getElementById('login-form');
+
+// ✅ CHANGE THIS: Replace with your actual backend URL
+const backendUrl = 'https://studypulse-zyb9.onrender.com/api/auth';
+
+registerBtn.addEventListener('click', () => {
+  container.classList.add('active');
+});
+
+loginBtn.addEventListener('click', () => {
+  container.classList.remove('active');
+});
+
+signupForm.addEventListener('submit', async e => {
   e.preventDefault();
 
   const firstName = signupForm.querySelector('input[name="first_name"]').value;
@@ -288,7 +307,13 @@
       body: JSON.stringify({ firstName, lastName, email, username, password }),
     });
 
-    const data = await response.json(); // This line caused the error
+    let data;
+    try {
+      data = await response.json();
+    } catch (err) {
+      throw new Error('Server returned non-JSON response');
+    }
+
     if (response.ok) {
       alert('Registered successfully! Please login.');
       signupForm.reset();
@@ -297,10 +322,43 @@
       alert('Signup error: ' + data.message);
     }
   } catch (err) {
-    alert('Signup failed. Please check the console.');
-    console.error('Signup error:', err);
+    alert('Signup failed: ' + err.message);
+    console.error(err);
   }
-});  
+});
+
+loginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const email = loginForm.querySelector('input[name="email"]').value;
+  const password = loginForm.querySelector('input[name="password"]').value;
+
+  try {
+    const response = await fetch(`${backendUrl}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (err) {
+      throw new Error('Server returned non-JSON response');
+    }
+
+    if (response.ok) {
+      alert('Login successful! Redirecting...');
+      window.location.href = 'dashboard.html'; 
+    } else {
+      alert('Login error: ' + data.message);
+    }
+  } catch (err) {
+    alert('Login failed: ' + err.message);
+    console.error(err);
+  }
+});
+
   </script>
 
 </body>
