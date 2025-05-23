@@ -242,7 +242,19 @@
         </div>
     </header>
 
- 
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2>Account Settings</h2>
+                <span class="material-icons-sharp close-settings" id="closeSettings">close</span>
+            </div>
+
+            <div class="settings-tabs">
+                <div class="settings-tab active" data-tab="profile">Profile</div>
+                <div class="settings-tab" data-tab="password">Password</div>
+            </div>
+
             <!-- Profile Tab -->
             <div class="tab-content active" id="profile-tab">
                 <form class="settings-form" id="profileForm">
@@ -570,189 +582,4 @@ document.addEventListener("DOMContentLoaded", () => {
   const profileDob = document.getElementById("profileDob");
   const profileContact = document.getElementById("profileContact");
   const profileEmail = document.getElementById("profileEmail");
-  const profileAddress = document.getElementById("profileAddress");
-  const currentProfilePhoto = document.getElementById("currentProfilePhoto");
-
-  // Settings form inputs
-  const profileForm = document.getElementById("profileForm");
-  const firstNameInput = document.getElementById("firstName");
-  const lastNameInput = document.getElementById("lastName");
-  const dobInput = document.getElementById("dob");
-  const contactInput = document.getElementById("contact");
-  const emailInput = document.getElementById("email");
-  const courseSelect = document.getElementById("course");
-  const addressInput = document.getElementById("address");
-  const profilePreview = document.getElementById("profilePreview");
-  const photoUrlInput = document.getElementById("photoUrl");
-  const photoUploadInput = document.getElementById("photoUpload");
-
-  // Settings modal and tabs
-  const settingsModal = document.getElementById("settingsModal");
-  const openSettingsBtn = document.getElementById("openSettings");
-  const closeSettingsBtn = document.getElementById("closeSettings");
-  const settingsTabs = document.querySelectorAll(".settings-tab");
-  const tabContents = document.querySelectorAll(".tab-content");
-
-  // Populate profile display
-  profileName.textContent = `${user.firstName || ""} ${user.lastName || ""}`.trim();
-  profileCourse.textContent = user.course || "Not provided";
-  profileDob.textContent = user.dob || "Not provided";
-  profileContact.textContent = user.contact || "Not provided";
-  profileEmail.textContent = user.email || "Not provided";
-  profileAddress.textContent = user.address || "Not provided";
-
-  if (user.profilePhoto) {
-    currentProfilePhoto.src = user.profilePhoto;
-  }
-
-  // Populate settings form inputs
-  firstNameInput.value = user.firstName || "";
-  lastNameInput.value = user.lastName || "";
-  dobInput.value = user.dob || "";
-  contactInput.value = user.contact || "";
-  emailInput.value = user.email || "";
-  courseSelect.value = user.course || "";
-  addressInput.value = user.address || "";
-  profilePreview.src = user.profilePhoto || "./images/profile-1.jpg";
-  photoUrlInput.value = user.profilePhoto || "";
-
-  // Open settings modal
-  openSettingsBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    settingsModal.style.display = "flex";
-  });
-
-  // Close settings modal
-  closeSettingsBtn.addEventListener("click", () => {
-    settingsModal.style.display = "none";
-  });
-
-  // Switch tabs inside settings modal
-  settingsTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      // Remove active class from all tabs and contents
-      settingsTabs.forEach(t => t.classList.remove("active"));
-      tabContents.forEach(c => c.classList.remove("active"));
-
-      // Add active class to clicked tab and corresponding content
-      tab.classList.add("active");
-      const target = tab.getAttribute("data-tab");
-      document.getElementById(`${target}-tab`).classList.add("active");
-    });
-  });
-
-  // Profile photo upload preview
-  photoUploadInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        profilePreview.src = ev.target.result;
-        photoUrlInput.value = "";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // Profile photo URL input preview
-  photoUrlInput.addEventListener("input", () => {
-    const url = photoUrlInput.value.trim();
-    if (url) {
-      profilePreview.src = url;
-      photoUploadInput.value = ""; // reset file input
-    }
-  });
-
-  // Save profile changes form submission
-  profileForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // Collect form data
-    const updatedUser = {
-      ...user,
-      firstName: firstNameInput.value.trim(),
-      lastName: lastNameInput.value.trim(),
-      dob: dobInput.value,
-      contact: contactInput.value.trim(),
-      email: emailInput.value.trim(),
-      course: courseSelect.value,
-      address: addressInput.value.trim(),
-      profilePhoto: profilePreview.src,
-    };
-
-    // Save updated user back to localStorage
-    localStorage.setItem(userKey, JSON.stringify(updatedUser));
-
-    // Update profile display on page
-    profileName.textContent = `${updatedUser.firstName} ${updatedUser.lastName}`.trim();
-    profileCourse.textContent = updatedUser.course || "Not provided";
-    profileDob.textContent = updatedUser.dob || "Not provided";
-    profileContact.textContent = updatedUser.contact || "Not provided";
-    profileEmail.textContent = updatedUser.email || "Not provided";
-    profileAddress.textContent = updatedUser.address || "Not provided";
-    currentProfilePhoto.src = updatedUser.profilePhoto;
-
-    alert("Profile changes saved!");
-
-    // Close modal
-    settingsModal.style.display = "none";
-  });
-
-});
-    window.onload = loadSubjects;
-    </script>
-    <script>
-    window.onload = function() {
-    let courses = JSON.parse(localStorage.getItem("courses")) || [];
-    let container = document.getElementById("dynamic-grades");
-
-    courses.forEach(course => {
-        let div = document.createElement("div");
-        div.className = "grade-card";
-        div.innerHTML = `
-            <h3><span class="material-icons-sharp">school</span>
-            ${course.name}</h3>
-            <p>${course.prelim} / ${course.midterm} / ${course.final}</p>
-            <div class="progress" style="--percentage:${course.percentage}">
-                <svg><circle cx="38" cy="38" r="36"></circle></svg>
-                <div class="number"><p>${course.percentage}%</p></div>
-            </div>
-            <small>Updated</small>
-        `;
-        container.appendChild(div);
-    });
-}
-</script>
-</script> src="timeTable.js"></script>
-    <script src="app.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const timetableKey = "timetable"; // Key used for localStorage
-    const timetableSaveButton = document.getElementById("saveTimetableButton");
-    const timetableInput = document.getElementById("timetableInput"); // Assuming you have an input or textarea for timetable data
-
-    // Save timetable data
-    timetableSaveButton.addEventListener("click", () => {
-        const timetableData = timetableInput.value.trim(); // Get the value from the input/textarea
-
-        if (!timetableData) {
-            alert("Timetable cannot be empty!");
-            return;
-        }
-
-        // Save to localStorage
-        localStorage.setItem(timetableKey, timetableData);
-
-        alert("Timetable saved successfully!");
-    });
-
-    // Load timetable data on page load
-    const savedTimetable = localStorage.getItem(timetableKey);
-    if (savedTimetable) {
-        timetableInput.value = savedTimetable; // Populate the input/textarea with saved data
-    }
-});
-</script>
-</body>
-</html>
-
+  const prof
