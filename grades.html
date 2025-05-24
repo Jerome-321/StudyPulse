@@ -9,8 +9,30 @@
     <link rel="shortcut icon" href="./images/logo.png">
     <link rel="stylesheet" href="style.css">
     <style>
-    /* ... your styles unchanged ... */
-    </style>
+  <!-- Inside your <style> section -->
+<style>
+/* ...existing styles... */
+.colored-btn {
+    background: #008080;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5em 1.5em;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-right: 1em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #0001;
+    transition: background 0.2s;
+}
+.colored-btn:hover, .colored-btn:focus {
+    background: #006666;
+}
+</style>
+
+<!-- Update these buttons -->
+<button id="addCourseBtn" class="colored-btn">Add Course</button>
+<button id="saveCoursesBtn" class="colored-btn">Save Courses</button>
 </head>
 <body>
     <header>
