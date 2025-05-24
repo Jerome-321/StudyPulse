@@ -9,272 +9,115 @@
     <link rel="shortcut icon" href="./images/logo.png">
     <link rel="stylesheet" href="style.css">
     <style>
-        :root {
-            --color-primary: #7380ec;
-            --color-danger: #ff7782;
-            --color-success: #41f1b6;
-            --color-warning: #ffbb55;
-            --color-white: #fff;
-            --color-info: #7d8da1;
-            --color-dark: #363949;
-            --color-light: rgba(132, 139, 200, 0.18);
-            --color-dark-varient: #677483;
-            --color-background: #f6f6f9;
-            --box-shadow: 0 2rem 3rem var(--color-light);
-            --card-border-radius: 2rem;
-            --border-radius-1: 0.4rem;
-            --border-radius-2: 1.2rem;
-            --card-padding: 1.8rem;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            background-color: var(--color-background);
-            min-height: 100vh;
-            color: var(--color-dark);
-        }
-        .main-content {
-            flex: 1;
-            padding: 150px;
-            background-color: var(--color-white);
-            margin-left: 250px;
-        }
-        .container {
-            background: var(--color-white);
-            padding: 20px;
-            border-radius: var(--card-border-radius);
-            box-shadow: var(--box-shadow);
-            max-width: 800px;
-            margin: 20px auto;
-        }
-        .course-entry, .saved-course {
-            margin-bottom: 10px;
-            padding: 15px;
-            background: var(--color-light);
-            border-radius: var(--border-radius-2);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        .course-entry:hover, .saved-course:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--box-shadow);
-        }
-        button, .sort-btn, .export-btn, .import-btn {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: var(--color-primary);
-            color: var(--color-white);
-            border: none;
-            cursor: pointer;
-            border-radius: var(--border-radius-1);
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        button:hover, .sort-btn:hover, .export-btn:hover, .import-btn:hover {
-            background: #357abd;
-        }
-        .remove-btn {
-            background: var(--color-danger);
-        }
-        .remove-btn:hover {
-            background: #c82333;
-        }
-        .update-btn {
-            background: var(--color-success);
-        }
-        .update-btn:hover {
-            background: #218838;
-        }
-        input[type="text"], input[type="number"] {
-            padding: 8px 12px;
-            border: 2px solid #e9ecef;
-            border-radius: var(--border-radius-1);
-            margin-right: 10px;
-            transition: all 0.3s ease;
-        }
-        input[type="text"]:focus, input[type="number"]:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-        }
-        .sort-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1rem;
-        }
-        .course-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: var(--color-light);
-            border-radius: var(--border-radius-1);
-        }
-        .tooltip {
-            position: absolute;
-            background: var(--color-dark);
-            color: var(--color-white);
-            padding: 0.3rem 0.6rem;
-            border-radius: var(--border-radius-1);
-            font-size: 0.8rem;
-            white-space: nowrap;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-            z-index: 1000;
-        }
-        @media (max-width: 600px) {
-            .main-content { padding: 10px; margin-left: 0; }
-            .settings-content { padding: 1rem; }
-            .form-group { flex: 1 1 100%; }
-            .course-entry, .saved-course { flex-direction: column; gap: 0.5rem; }
-        }
+    /* ... your styles unchanged ... */
     </style>
 </head>
 <body>
-    <header> <!-- ... your header unchanged ... --> </header>
+    <header>
+        <!-- ... your header/navbar unchanged ... -->
+    </header>
     <div class="main-content">
         <div class="container">
             <h2>Course Selection and Grades</h2>
-            <button id="addCourseBtn" aria-label="Add new course">Add Course</button>
+            <button id="addCourseBtn">Add Course</button>
             <div id="course-list"></div>
-            <button id="saveCoursesBtn" aria-label="Save courses">Save Courses</button>
+            <button id="saveCoursesBtn">Save Courses</button>
         </div>
         <div class="container" id="saved-courses-container" style="margin-top: 20px; display: none;">
             <h2>Saved Courses</h2>
-            <div class="sort-buttons"></div>
             <div id="saved-courses"></div>
         </div>
     </div>
-    <!-- Settings Modal ... keep your settings modal unchanged ... -->
 
-<script>
-(function() {
-    // === Helper functions ===
+    <!-- Settings Modal ... keep unchanged ... -->
 
-    function showToast(message, isError = false) {
-        let toast = document.getElementById('toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'toast';
-            toast.style.position = 'fixed';
-            toast.style.bottom = '32px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.background = isError ? 'var(--color-danger)' : 'var(--color-success)';
-            toast.style.color = '#fff';
-            toast.style.padding = '12px 28px';
-            toast.style.borderRadius = '8px';
-            toast.style.fontSize = '1rem';
-            toast.style.zIndex = '9999';
-            toast.style.boxShadow = '0 2px 12px rgba(0,0,0,0.2)';
-            document.body.appendChild(toast);
-        }
-        toast.textContent = message;
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2300);
-    }
+    <script>
+    // Modal Profile logic (unchanged, keep your settings code)
 
-    function validateGradeInput(input) {
-        const value = parseFloat(input.value);
-        if (isNaN(value) || value < 0 || value > 100) {
-            input.style.borderColor = 'var(--color-danger)';
-            return false;
-        } else {
-            input.style.borderColor = '';
-            return true;
-        }
-    }
-
-    // === Course logic ===
-
-    function addCourseEntry() {
-        let courseContainer = document.getElementById("course-list");
-        let courseEntry = document.createElement("div");
-        courseEntry.className = "course-entry";
-        courseEntry.innerHTML = `
-            <input type="text" placeholder="Course Name" required>
-            <input type="number" placeholder="Prelim Grade" min="0" max="100" required>
-            <input type="number" placeholder="Midterm Grade" min="0" max="100" required>
-            <input type="number" placeholder="Final Grade" min="0" max="100" required>
-            <button class="remove-btn" type="button" aria-label="Remove" title="Remove this course">Remove</button>
+    // ---- Grades logic below ----
+    function createCourseEntry(name = '', prelim = '', midterm = '', final = '') {
+        const div = document.createElement('div');
+        div.className = 'course-entry';
+        div.innerHTML = `
+            <input type="text" placeholder="Course Name" value="${name}" required>
+            <input type="number" placeholder="Prelim Grade" min="0" max="100" value="${prelim}" required>
+            <input type="number" placeholder="Midterm Grade" min="0" max="100" value="${midterm}" required>
+            <input type="number" placeholder="Final Grade" min="0" max="100" value="${final}" required>
+            <button class="remove-btn" type="button">Remove</button>
         `;
-        // Remove button
-        courseEntry.querySelector('.remove-btn').onclick = function() {
-            courseEntry.remove();
-        };
-        // Grade input validation
-        courseEntry.querySelectorAll('input[type="number"]').forEach(input => {
-            input.oninput = () => validateGradeInput(input);
-        });
-        courseContainer.appendChild(courseEntry);
+        // Remove handler
+        div.querySelector('.remove-btn').onclick = () => div.remove();
+        return div;
     }
 
-    function getCoursesFromEntries() {
-        return Array.from(document.querySelectorAll(".course-entry")).map(entry => {
+    function addCourse(name = '', prelim = '', midterm = '', final = '') {
+        document.getElementById('course-list').appendChild(
+            createCourseEntry(name, prelim, midterm, final)
+        );
+    }
+
+    function getCoursesFromInputs() {
+        let courses = [];
+        document.querySelectorAll(".course-entry").forEach(entry => {
             let inputs = entry.getElementsByTagName("input");
             let name = inputs[0].value.trim();
             let prelim = parseFloat(inputs[1].value) || 0;
             let midterm = parseFloat(inputs[2].value) || 0;
             let final = parseFloat(inputs[3].value) || 0;
             let percentage = Math.round((prelim + midterm + final) / 3);
-            return { name, prelim, midterm, final, percentage };
+            courses.push({ name, prelim, midterm, final, percentage });
         });
+        return courses;
     }
 
     function saveCourses() {
-        let courses = getCoursesFromEntries();
-        // Validation
-        for (const course of courses) {
-            if (!course.name) {
-                showToast("All courses must have a name.", true);
-                return;
-            }
-            if ([course.prelim, course.midterm, course.final].some(grade => grade < 0 || grade > 100)) {
-                showToast("Grades must be between 0 and 100.", true);
-                return;
+        let courses = getCoursesFromInputs();
+        for (const c of courses) {
+            if (!c.name) { alert('All courses must have a name.'); return; }
+            if ([c.prelim, c.midterm, c.final].some(v => v < 0 || v > 100)) {
+                alert('Grades must be 0-100.'); return;
             }
         }
-        showLoading(true);
-        setTimeout(() => {
-            localStorage.setItem("courses", JSON.stringify(courses));
-            displaySavedCourses();
-            showLoading(false);
-            showToast("Courses saved successfully!");
-        }, 800); // Simulate load
+        localStorage.setItem("courses", JSON.stringify(courses));
+        displaySavedCourses();
+        alert("Courses saved successfully!");
     }
 
     function displaySavedCourses() {
-        let savedCoursesDiv = document.getElementById("saved-courses");
-        let savedCoursesContainer = document.getElementById("saved-courses-container");
-        savedCoursesDiv.innerHTML = "";
-
+        let container = document.getElementById("saved-courses-container");
+        let div = document.getElementById("saved-courses");
+        div.innerHTML = "";
         let courses = JSON.parse(localStorage.getItem("courses")) || [];
-        // Show stats
-        displayCourseStats(courses);
-
-        courses.forEach((course, index) => {
+        if (courses.length === 0) { container.style.display = "none"; return; }
+        // Stats
+        let stats = '';
+        if (courses.length) {
+            let avg = Math.round(courses.reduce((a, c) => a + c.percentage, 0) / courses.length);
+            let min = Math.min(...courses.map(c => c.percentage));
+            let max = Math.max(...courses.map(c => c.percentage));
+            stats = `
+                <div class="course-stats" style="display:flex;gap:2rem;margin-bottom:1rem;">
+                    <div><small>Courses</small><h3>${courses.length}</h3></div>
+                    <div><small>Average</small><h3>${avg}%</h3></div>
+                    <div><small>Highest</small><h3>${max}%</h3></div>
+                    <div><small>Lowest</small><h3>${min}%</h3></div>
+                </div>
+            `;
+        }
+        div.innerHTML = stats;
+        courses.forEach((course, idx) => {
             let courseDiv = document.createElement("div");
             courseDiv.className = "saved-course";
             courseDiv.innerHTML = `
-                <input type="text" value="${course.name}" aria-label="Course name">
-                <input type="number" value="${course.prelim}" min="0" max="100" aria-label="Prelim Grade">
-                <input type="number" value="${course.midterm}" min="0" max="100" aria-label="Midterm Grade">
-                <input type="number" value="${course.final}" min="0" max="100" aria-label="Final Grade">
+                <input type="text" value="${course.name}">
+                <input type="number" value="${course.prelim}" min="0" max="100">
+                <input type="number" value="${course.midterm}" min="0" max="100">
+                <input type="number" value="${course.final}" min="0" max="100">
                 <span style="font-weight:bold;">${course.percentage}%</span>
-                <button class="update-btn" type="button" aria-label="Update">Update</button>
-                <button class="remove-btn" type="button" aria-label="Remove">Remove</button>
+                <button class="update-btn" type="button">Update</button>
+                <button class="remove-btn" type="button">Remove</button>
             `;
-            // Update
+            // Update logic
             courseDiv.querySelector('.update-btn').onclick = function() {
                 let inputs = courseDiv.querySelectorAll('input');
                 let updated = {
@@ -283,226 +126,48 @@
                     midterm: parseFloat(inputs[2].value) || 0,
                     final: parseFloat(inputs[3].value) || 0,
                 };
-                if (!updated.name) return showToast("Course name required.", true);
-                if ([updated.prelim, updated.midterm, updated.final].some(g => g < 0 || g > 100))
-                    return showToast("Grades must be 0-100.", true);
+                if (!updated.name) { alert("Course name required."); return; }
+                if ([updated.prelim, updated.midterm, updated.final].some(v => v < 0 || v > 100)) {
+                    alert("Grades must be 0-100."); return;
+                }
                 updated.percentage = Math.round((updated.prelim + updated.midterm + updated.final) / 3);
-                courses[index] = updated;
+                courses[idx] = updated;
                 localStorage.setItem("courses", JSON.stringify(courses));
                 displaySavedCourses();
-                showToast("Course updated!");
+                alert("Course updated!");
             };
-            // Remove
+            // Remove logic
             courseDiv.querySelector('.remove-btn').onclick = function() {
-                if (confirm('Are you sure you want to delete this course?')) {
-                    courses.splice(index, 1);
+                if (confirm('Delete this course?')) {
+                    courses.splice(idx, 1);
                     localStorage.setItem("courses", JSON.stringify(courses));
                     displaySavedCourses();
                 }
             };
-            // Grade input validation
-            courseDiv.querySelectorAll('input[type="number"]').forEach(input => {
-                input.oninput = () => validateGradeInput(input);
-            });
-            savedCoursesDiv.appendChild(courseDiv);
+            div.appendChild(courseDiv);
         });
-        savedCoursesContainer.style.display = courses.length > 0 ? "block" : "none";
+        container.style.display = "block";
     }
 
-    // === Statistics & Sorting ===
+    // Event handlers for buttons
+    document.getElementById('addCourseBtn').onclick = () => addCourse();
+    document.getElementById('saveCoursesBtn').onclick = saveCourses;
 
-    function displayCourseStats(courses) {
-        let statsDiv = document.createElement('div');
-        statsDiv.className = "course-stats";
-        if (!courses.length) return;
-        let percentages = courses.map(c => c.percentage);
-        let avg = Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length);
-        let min = Math.min(...percentages);
-        let max = Math.max(...percentages);
-        statsDiv.innerHTML = `
-            <div><small>Courses</small><h3>${courses.length}</h3></div>
-            <div><small>Average</small><h3>${avg}%</h3></div>
-            <div><small>Highest</small><h3>${max}%</h3></div>
-            <div><small>Lowest</small><h3>${min}%</h3></div>
-        `;
-        let savedCoursesDiv = document.getElementById('saved-courses');
-        savedCoursesDiv.appendChild(statsDiv);
-    }
-
-    function sortCourses(criteria) {
-        let courses = JSON.parse(localStorage.getItem("courses")) || [];
-        if (criteria === 'name') {
-            courses.sort((a, b) => a.name.localeCompare(b.name));
-        } else if (criteria === 'percentage') {
-            courses.sort((a, b) => b.percentage - a.percentage);
-        }
-        localStorage.setItem("courses", JSON.stringify(courses));
-        displaySavedCourses();
-    }
-
-    // === Import/Export ===
-
-    function exportCourses() {
-        const courses = JSON.parse(localStorage.getItem("courses")) || [];
-        if (!courses.length) return showToast('No courses to export', true);
-        let csv = 'Course Name,Prelim Grade,Midterm Grade,Final Grade,Percentage\n';
-        courses.forEach(course => {
-            csv += `${course.name},${course.prelim},${course.midterm},${course.final},${course.percentage}\n`;
-        });
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'my_courses.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast('Courses exported!');
-    }
-
-    function importCoursesFromFile(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const content = e.target.result;
-                const lines = content.split('\n');
-                if (!lines.length) return showToast('Empty file.', true);
-                const headers = lines[0].split(',');
-                if (headers.length < 5) return showToast('Invalid CSV format', true);
-                const courses = [];
-                for (let i = 1; i < lines.length; i++) {
-                    if (!lines[i].trim()) continue;
-                    const v = lines[i].split(',');
-                    if (v.length < 5) continue;
-                    courses.push({
-                        name: v[0],
-                        prelim: parseFloat(v[1]) || 0,
-                        midterm: parseFloat(v[2]) || 0,
-                        final: parseFloat(v[3]) || 0,
-                        percentage: parseFloat(v[4]) || 0
-                    });
-                }
-                if (courses.length) {
-                    localStorage.setItem("courses", JSON.stringify(courses));
-                    displaySavedCourses();
-                    showToast(`${courses.length} courses imported!`);
-                } else {
-                    showToast('No valid courses found.', true);
-                }
-            } catch (err) {
-                showToast('Error importing courses', true);
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    // === UI setup ===
-
-    function setupUI() {
-        // Add course, save courses
-        document.getElementById('addCourseBtn').onclick = addCourseEntry;
-        document.getElementById('saveCoursesBtn').onclick = saveCourses;
-
-        // Sort, import, export buttons
-        let sortBtnsDiv = document.querySelector('.sort-buttons');
-        sortBtnsDiv.innerHTML = '';
-        [
-            { text: 'Sort by Name', icon: 'sort_by_alpha', fn: () => sortCourses('name') },
-            { text: 'Sort by Percentage', icon: 'sort', fn: () => sortCourses('percentage') },
-            { text: 'Export to CSV', icon: 'download', fn: exportCourses },
-            { text: 'Import from CSV', icon: 'upload', fn: function() {
-                importInput.click();
-            }},
-        ].forEach(cfg => {
-            let btn = document.createElement('button');
-            btn.innerHTML = `<span class="material-icons-sharp">${cfg.icon}</span> ${cfg.text}`;
-            btn.type = 'button';
-            btn.onclick = cfg.fn;
-            sortBtnsDiv.appendChild(btn);
-        });
-        // Import input (hidden)
-        let importInput = document.createElement('input');
-        importInput.type = 'file';
-        importInput.accept = '.csv';
-        importInput.style.display = 'none';
-        importInput.onchange = (e) => {
-            if (e.target.files[0]) importCoursesFromFile(e.target.files[0]);
-        };
-        sortBtnsDiv.appendChild(importInput);
-
-        // Tooltips
-        document.querySelectorAll('button').forEach(button => {
-            if (button.innerText.includes('Add Course')) button.title = 'Add a new course (Ctrl+N)';
-            if (button.innerText.includes('Save Courses')) button.title = 'Save all courses (Ctrl+S)';
-            if (button.innerText.includes('Remove')) button.title = 'Remove this course';
-            if (button.innerText.includes('Update')) button.title = 'Update course';
-        });
-    }
-
-    function showLoading(show) {
-        let loading = document.getElementById('loading');
-        if (!loading && show) {
-            loading = document.createElement('div');
-            loading.id = 'loading';
-            loading.style.position = 'fixed';
-            loading.style.top = '0';
-            loading.style.left = '0';
-            loading.style.width = '100vw';
-            loading.style.height = '100vh';
-            loading.style.backgroundColor = 'rgba(0,0,0,0.15)';
-            loading.style.display = 'flex';
-            loading.style.justifyContent = 'center';
-            loading.style.alignItems = 'center';
-            loading.style.zIndex = '9999';
-
-            const spinner = document.createElement('div');
-            spinner.style.width = '50px';
-            spinner.style.height = '50px';
-            spinner.style.border = '5px solid var(--color-light)';
-            spinner.style.borderTopColor = 'var(--color-primary)';
-            spinner.style.borderRadius = '50%';
-            spinner.style.animation = 'spin 1s linear infinite';
-
-            loading.appendChild(spinner);
-            document.body.appendChild(loading);
-
-            // Add keyframes
-            if (!document.getElementById('spinner-anim')) {
-                const style = document.createElement('style');
-                style.id = 'spinner-anim';
-                style.textContent = `
-                    @keyframes spin { 0% {transform:rotate(0deg);} 100% {transform:rotate(360deg);} }
-                `;
-                document.head.appendChild(style);
-            }
-        } else if (loading && !show) {
-            loading.remove();
-        }
-    }
-
-    // === Keyboard shortcuts ===
+    // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
         if (e.ctrlKey && e.key === 'n') {
-            e.preventDefault();
-            addCourseEntry();
+            e.preventDefault(); addCourse();
         } else if (e.ctrlKey && e.key === 's') {
-            e.preventDefault();
-            saveCourses();
+            e.preventDefault(); saveCourses();
         }
     });
 
-    // === Initial load ===
+    // On page load, show saved courses and one blank entry if empty
     window.onload = function() {
-        setupUI();
         displaySavedCourses();
-        // If no courses, show one input row by default
-        if (!JSON.parse(localStorage.getItem("courses"))) {
-            addCourseEntry();
-        }
+        let courses = JSON.parse(localStorage.getItem("courses")) || [];
+        if (!courses.length) addCourse();
     };
-})();
-</script>
-
+    </script>
 </body>
 </html>
