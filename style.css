@@ -555,7 +555,25 @@ main .timetable.active .closeBtn{
   border-radius: 12px;
   margin-bottom: 0.75rem;
 }
+/* ...all your existing CSS... */
 
+/* Button style matching the stats card colors */
+.colored-btn {
+    background: #008080;        /* Teal (matches stats) */
+    color: #fff;                /* White text */
+    border: none;
+    border-radius: 6px;         /* Rounded edges */
+    padding: 0.5em 1.5em;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-right: 1em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #0001;
+    transition: background 0.2s;
+}
+.colored-btn:hover, .colored-btn:focus {
+    background: #006666;        /* Slightly darker on hover */
+}
 
 
 }
