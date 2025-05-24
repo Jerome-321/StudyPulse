@@ -19,6 +19,78 @@
       --text: #2f2f2f;
       --color-white: #fff;
     }
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+    }
+    h2 {
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 1em;
+    }
+    .container {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px var(--shadow-dark);
+      padding: 2em;
+      max-width: 600px;
+      margin: 2em auto;
+    }
+    .course-entry, .saved-course {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7em;
+      align-items: center;
+      background: #f5f6fa;
+      padding: 1em 0.5em;
+      border-radius: 8px;
+      margin-bottom: 1em;
+      box-shadow: 0 1px 4px #0001;
+    }
+    .course-entry input, .saved-course input {
+      font-family: inherit;
+      font-size: 1em;
+      padding: 0.4em 0.7em;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+      width: 135px;
+      background: #fff;
+      transition: border 0.2s;
+    }
+    .course-entry input:focus, .saved-course input:focus {
+      border: 1.5px solid var(--primary);
+    }
+    .remove-btn, .update-btn {
+      background: #ff5757;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 0.4em 1em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 0.3em;
+      transition: background 0.2s;
+    }
+    .remove-btn:hover, .update-btn:hover {
+      background: #c0392b;
+    }
+    .update-btn {
+      background: #4f46e5;
+    }
+    .update-btn:hover {
+      background: #372fa0;
+    }
+    .course-stats div {
+      background: #e4e8f1;
+      border-radius: 8px;
+      padding: 0.5em 1em;
+      text-align: center;
+    }
     .colored-btn {
       background: var(--primary);
       color: var(--color-white);
@@ -34,6 +106,16 @@
     }
     .colored-btn:hover, .colored-btn:focus {
       background: #372fa0;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1em;
+        max-width: 98vw;
+      }
+      .course-entry input, .saved-course input {
+        width: 100px;
+        font-size: 0.95em;
+      }
     }
   </style>
 </head>
