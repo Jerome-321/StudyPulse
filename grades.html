@@ -1,522 +1,410 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-    <link rel="shortcut icon" href="./images/logo.png">
-    <link rel="stylesheet" href="style.css">
-    <style>
-    :root {
-    --color-primary: #7380ec;
-    --color-danger: #ff7782;
-    --color-success: #41f1b6;
-    --color-warning: #ffbb55;
-    --color-white: #fff;
-    --color-info: #7d8da1;
-    --color-dark: #363949;
-    --color-light: rgba(132, 139, 200, 0.18);
-    --color-dark-varient: #677483;
-    --color-background: #f6f6f9;
-    --box-shadow: 0 2rem 3rem var(--color-light);
-    --card-border-radius: 2rem;
-    --border-radius-1: 0.4rem;
-    --border-radius-2: 1.2rem;
-    --card-padding: 1.8rem;
-}
+                    // Add event listener for photo URL input
+                    document.getElementById('photoUrl').addEventListener('change', function() {
+                        const url = this.value.trim();
+                        if (url) {
+                            // Validate URL format
+                            if (/^https?:\/\/.+\..+/.test(url)) {
+                                document.getElementById('profilePreview').src = url;
+                            } else {
+                                showToast('Please enter a valid image URL', true);
+                            }
+                        }
+                    });
 
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    background-color: var(--color-background);
-    min-height: 100vh;
-    color: var(--color-dark);
-}
-.main-content {
-    flex: 1;
-    padding: 150px;
-    background-color: var(--color-white);
-    margin-left: 250px;
-}
+                    // Add form validation for profile form
+                    document.getElementById('profileForm').addEventListener('submit', function(e) {
+                        const email = document.getElementById('email').value;
+                        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                            e.preventDefault();
+                            showToast('Please enter a valid email address', true);
+                            return;
+                        }
+                    });
 
-.container {
-    background: var(--color-white);
-    padding: 20px;
-    border-radius: var(--card-border-radius);
-    box-shadow: var(--box-shadow);
-    max-width: 800px;
-    margin: 20px auto;
-}
+                    // Add password visibility toggle
+                    const passwordInputs = document.querySelectorAll('input[type="password"]');
+                    passwordInputs.forEach(input => {
+                        const toggle = document.createElement('span');
+                        toggle.className = 'password-toggle material-icons-sharp';
+                        toggle.textContent = 'visibility';
+                        toggle.style.cursor = 'pointer';
+                        toggle.style.marginLeft = '-30px';
+                        toggle.style.position = 'relative';
+                        toggle.style.zIndex = '1';
+                        toggle.addEventListener('click', function() {
+                            if (input.type === 'password') {
+                                input.type = 'text';
+                                toggle.textContent = 'visibility_off';
+                            } else {
+                                input.type = 'password';
+                                toggle.textContent = 'visibility';
+                            }
+                        });
+                        input.parentNode.insertBefore(toggle, input.nextSibling);
+                    });
 
-.course-entry, .saved-course {
-    margin-bottom: 10px;
-    padding: 15px;
-    background: var(--color-light);
-    border-radius: var(--border-radius-2);
-    transition: all 0.3s ease;
-}
+                    // Add course grade validation
+                    function validateGradeInput(input) {
+                        const value = parseFloat(input.value);
+                        if (isNaN(value) || value < 0 || value > 100) {
+                            input.style.borderColor = 'var(--color-danger)';
+                            return false;
+                        } else {
+                            input.style.borderColor = '';
+                            return true;
+                        }
+                    }
 
-.course-entry:hover, .saved-course:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--box-shadow);
-}
+                    // Add event listeners for grade validation
+                    document.addEventListener('input', function(e) {
+                        if (e.target.type === 'number' && 
+                            (e.target.placeholder === 'Prelim' || 
+                             e.target.placeholder === 'Midterm' || 
+                             e.target.placeholder === 'Final')) {
+                            validateGradeInput(e.target);
+                        }
+                    });
 
-button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background: var(--color-primary);
-    color: var(--color-white);
-    border: none;
-    cursor: pointer;
-    border-radius: var(--border-radius-1);
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
+                    // Add course sorting functionality
+                    function sortCourses(criteria) {
+                        const courses = JSON.parse(localStorage.getItem("courses")) || [];
+                        if (criteria === 'name') {
+                            courses.sort((a, b) => a.name.localeCompare(b.name));
+                        } else if (criteria === 'percentage') {
+                            courses.sort((a, b) => b.percentage - a.percentage);
+                        }
+                        localStorage.setItem("courses", JSON.stringify(courses));
+                        displaySavedCourses();
+                    }
 
-button:hover {
-    background: #357abd;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
+                    // Add sort buttons to saved courses container
+                    const savedCoursesContainer = document.getElementById('saved-courses-container');
+                    const sortButtons = document.createElement('div');
+                    sortButtons.className = 'sort-buttons';
+                    sortButtons.style.marginBottom = '1rem';
+                    sortButtons.innerHTML = `
+                        <button onclick="sortCourses('name')" class="sort-btn">
+                            <span class="material-icons-sharp">sort_by_alpha</span> Sort by Name
+                        </button>
+                        <button onclick="sortCourses('percentage')" class="sort-btn">
+                            <span class="material-icons-sharp">sort</span> Sort by Percentage
+                        </button>
+                    `;
+                    savedCoursesContainer.insertBefore(sortButtons, savedCoursesContainer.firstChild.nextSibling);
 
-.remove-btn {
-    background: var(--color-danger);
-}
+                    // Add course statistics
+                    function calculateCourseStats() {
+                        const courses = JSON.parse(localStorage.getItem("courses")) || [];
+                        if (courses.length === 0) return null;
+                        
+                        const percentages = courses.map(c => c.percentage);
+                        const average = Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length);
+                        const min = Math.min(...percentages);
+                        const max = Math.max(...percentages);
+                        
+                        return { average, min, max, count: courses.length };
+                    }
 
-.remove-btn:hover {
-    background: #c82333;
-}
+                    function displayCourseStats() {
+                        const stats = calculateCourseStats();
+                        if (!stats) return;
+                        
+                        const statsContainer = document.createElement('div');
+                        statsContainer.className = 'course-stats';
+                        statsContainer.style.display = 'flex';
+                        statsContainer.style.justifyContent = 'space-between';
+                        statsContainer.style.marginBottom = '1rem';
+                        statsContainer.style.padding = '1rem';
+                        statsContainer.style.background = 'var(--color-light)';
+                        statsContainer.style.borderRadius = 'var(--border-radius-1)';
+                        
+                        statsContainer.innerHTML = `
+                            <div>
+                                <small class="text-muted">Courses</small>
+                                <h3>${stats.count}</h3>
+                            </div>
+                            <div>
+                                <small class="text-muted">Average</small>
+                                <h3>${stats.average}%</h3>
+                            </div>
+                            <div>
+                                <small class="text-muted">Highest</small>
+                                <h3>${stats.max}%</h3>
+                            </div>
+                            <div>
+                                <small class="text-muted">Lowest</small>
+                                <h3>${stats.min}%</h3>
+                            </div>
+                        `;
+                        
+                        const savedCoursesDiv = document.getElementById('saved-courses');
+                        savedCoursesDiv.insertBefore(statsContainer, savedCoursesDiv.firstChild);
+                    }
 
-.update-btn {
-    background: var(--color-success);
-}
+                    // Update displaySavedCourses to include stats
+                    const originalDisplaySavedCourses = displaySavedCourses;
+                    displaySavedCourses = function() {
+                        originalDisplaySavedCourses();
+                        displayCourseStats();
+                    };
 
-.update-btn:hover {
-    background: #218838;
-}
+                    // Add export functionality
+                    function exportCourses() {
+                        const courses = JSON.parse(localStorage.getItem("courses")) || [];
+                        if (courses.length === 0) {
+                            showToast('No courses to export', true);
+                            return;
+                        }
+                        
+                        let csv = 'Course Name,Prelim Grade,Midterm Grade,Final Grade,Percentage\n';
+                        courses.forEach(course => {
+                            csv += `${course.name},${course.prelim},${course.midterm},${course.final},${course.percentage}\n`;
+                        });
+                        
+                        const blob = new Blob([csv], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'my_courses.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        
+                        showToast('Courses exported successfully!');
+                    }
 
-input {
-    padding: 8px 12px;
-    border: 2px solid #e9ecef;
-    border-radius: var(--border-radius-1);
-    margin-right: 10px;
-    transition: all 0.3s ease;
-}
+                    // Add export button
+                    const exportButton = document.createElement('button');
+                    exportButton.className = 'export-btn';
+                    exportButton.innerHTML = `
+                        <span class="material-icons-sharp">download</span> Export to CSV
+                    `;
+                    exportButton.onclick = exportCourses;
+                    document.querySelector('.sort-buttons').appendChild(exportButton);
 
-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-}
+                    // Add import functionality
+                    function importCourses(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            try {
+                                const content = e.target.result;
+                                const lines = content.split('\n');
+                                const headers = lines[0].split(',');
+                                
+                                if (headers.length < 5 || 
+                                    !headers[0].includes('Course Name') || 
+                                    !headers[1].includes('Prelim Grade') || 
+                                    !headers[2].includes('Midterm Grade') || 
+                                    !headers[3].includes('Final Grade') || 
+                                    !headers[4].includes('Percentage')) {
+                                    showToast('Invalid CSV format', true);
+                                    return;
+                                }
+                                
+                                const courses = [];
+                                for (let i = 1; i < lines.length; i++) {
+                                    if (lines[i].trim() === '') continue;
+                                    
+                                    const values = lines[i].split(',');
+                                    if (values.length < 5) continue;
+                                    
+                                    courses.push({
+                                        name: values[0],
+                                        prelim: parseFloat(values[1]) || 0,
+                                        midterm: parseFloat(values[2]) || 0,
+                                        final: parseFloat(values[3]) || 0,
+                                        percentage: parseFloat(values[4]) || 0
+                                    });
+                                }
+                                
+                                if (courses.length > 0) {
+                                    localStorage.setItem("courses", JSON.stringify(courses));
+                                    displaySavedCourses();
+                                    showToast(`${courses.length} courses imported successfully!`);
+                                } else {
+                                    showToast('No valid courses found in file', true);
+                                }
+                            } catch (error) {
+                                showToast('Error importing courses', true);
+                                console.error(error);
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
 
-/* Modal Styles */
-.settings-modal {
-    display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh;
-    justify-content: center; align-items: center; background: rgba(0,0,0,0.5);
-}
-.settings-modal.active { display: flex !important; }
-.settings-content {
-    background: #fff; padding: 2rem; border-radius: 10px; max-width: 600px; width: 95vw;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-}
-.settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.settings-tabs { display: flex; border-bottom: 1px solid #eee; }
-.settings-tab {
-    padding: 0.7rem 1.2rem; cursor: pointer; color: #aaa; font-weight: 500;
-    border-bottom: 2px solid transparent; transition: color 0.2s, border 0.2s;
-}
-.settings-tab.active {
-    color: #7380ec; border-bottom: 2px solid #7380ec;
-}
-.tab-content { display: none; margin-top: 1.5rem; }
-.tab-content.active { display: block; }
-.profile-photo-upload { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.profile-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid #7380ec;}
-.settings-form, .password-form { display: flex; flex-wrap: wrap; gap: 1rem; }
-.form-group { flex: 1 1 45%; display: flex; flex-direction: column; }
-.form-group.full-width { flex: 1 1 100%; }
-.form-group label { margin-bottom: 0.3rem; color: #666; font-size: 0.97em;}
-.form-group input, .form-group select { padding: 0.6rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1em;}
-.save-btn { background: #7380ec; color: #fff; border: none; border-radius: 5px; padding: 0.8rem; cursor: pointer; font-size: 1em; font-weight: 500; width: 100%;}
-.close-settings { cursor: pointer; }
-.password-form .box { display: flex; flex-direction: column; margin-bottom: 1rem; }
-.password-form .btn { background: #7380ec; color: #fff; border-radius: 5px; border: none; padding: 0.7rem 1.5rem; cursor: pointer;}
-.password-form .text-muted { color: #888; font-size: 0.95em;}
-@media (max-width: 600px) {
-    .settings-content { padding: 1rem; }
-    .form-group { flex: 1 1 100%; }
-}
-    </style>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <img src="./images/logo.png" alt="">
-            <h2>Study<span class="danger">Pulse</span></h2>
-        </div>
-        <div class="navbar">
-            <a href="dashboard.html">
-                <span class="material-icons-sharp">home</span>
-                <h3>Home</h3>
-            </a>
-            <a href="timetable.html" onclick="timeTableAll()">
-                <span class="material-icons-sharp">today</span>
-                <h3>Class</h3>
-            </a> 
-            <a href="grades.html">
-                <span class="material-icons-sharp">grid_view</span>
-                <h3>Courses</h3>
-            </a>
-            <!-- Settings modal trigger -->
-            <a href="#" id="openSettings">
-                <span class="material-icons-sharp">settings</span>
-                <h3>Settings</h3>
-            </a>
-            <a href="logout.php">
-                <span class="material-icons-sharp">logout</span>
-                <h3>Logout</h3>
-            </a>
-        </div>
-        <div id="profile-btn" style="display: none;">
-            <span class="material-icons-sharp">person</span>
-        </div>
-        <div class="theme-toggler">
-            <span class="material-icons-sharp active">light_mode</span>
-            <span class="material-icons-sharp">dark_mode</span>
-        </div>
-    </header>
-    <div class="main-content">
-        <div class="container">
-            <h2>Course Selection and Grades</h2>
-            <button onclick="addCourse()">Add Course</button>
-            <div id="course-list"></div>
-            <button onclick="saveCourses()">Save Courses</button>
-        </div>
-        <div class="container" id="saved-courses-container" style="margin-top: 20px; display: none;">
-            <h2>Saved Courses</h2>
-            <div id="saved-courses"></div>
-        </div>
-    </div>
+                    // Add import button
+                    const importInput = document.createElement('input');
+                    importInput.type = 'file';
+                    importInput.accept = '.csv';
+                    importInput.style.display = 'none';
+                    importInput.onchange = importCourses;
+                    document.body.appendChild(importInput);
+                    
+                    const importButton = document.createElement('button');
+                    importButton.className = 'import-btn';
+                    importButton.innerHTML = `
+                        <span class="material-icons-sharp">upload</span> Import from CSV
+                    `;
+                    importButton.onclick = function() {
+                        importInput.click();
+                    };
+                    document.querySelector('.sort-buttons').appendChild(importButton);
 
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <h2>Account Settings</h2>
-                <span class="material-icons-sharp close-settings" id="closeSettings">close</span>
-            </div>
-            <div class="settings-tabs">
-                <div class="settings-tab active" data-tab="profile">Profile</div>
-                <div class="settings-tab" data-tab="password">Password</div>
-            </div>
-            <!-- Profile Tab -->
-            <div class="tab-content active" id="profile-tab">
-                <form class="settings-form" id="profileForm">
-                    <div class="profile-photo-upload" style="width: 100%;">
-                        <img id="profilePreview" src="./images/profile-1.jpg" alt="Profile Photo" class="profile-preview">
-                        <input type="file" id="photoUpload" accept="image/*" style="display: none;">
-                        <button type="button" class="photo-upload-btn" onclick="document.getElementById('photoUpload').click()">Upload Photo</button>
-                        <input type="text" id="photoUrl" class="photo-url-input" placeholder="Or enter image URL">
-                    </div>
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="dob">Date of Birth</label>
-                        <input type="date" id="dob">
-                    </div>
-                    <div class="form-group">
-                        <label for="contact">Contact Number</label>
-                        <input type="tel" id="contact">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="course">Course</label>
-                        <select id="course">
-                            <option value="">Select Course</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Engineering">Engineering</option>
-                            <option value="Business">Business</option>
-                            <option value="Arts">Arts</option>
-                            <option value="Science">Science</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="address">Address</label>
-                        <input type="text" id="address">
-                    </div>
-                    <button type="submit" class="save-btn">Save Profile Changes</button>
-                </form>
-            </div>
-            <!-- Password Tab -->
-            <div class="tab-content" id="password-tab">
-                <form class="password-form" id="passwordForm">
-                    <h2>Create new password</h2>
-                    <p class="text-muted">Your new password must be different from previous used passwords.</p>
-                    <div class="box">
-                        <p class="text-muted">Current Password</p>
-                        <input type="password" id="currentpass" required>
-                    </div>
-                    <div class="box">
-                        <p class="text-muted">New Password</p>
-                        <input type="password" id="newpass" required>
-                        <p class="password-requirements">Minimum 8 characters with at least one number and one special character</p>
-                    </div>
-                    <div class="box">
-                        <p class="text-muted">Confirm Password</p>
-                        <input type="password" id="confirmpass" required>
-                    </div>
-                    <div class="button">
-                        <button type="submit" class="btn">Save</button>
-                        <a href="#" id="cancelPassword" class="text-muted">Cancel</a>
-                    </div>
-                    <a href="#" id="forgotPassword"><p>Forgot password?</p></a>
-                </form>
-            </div>
-        </div>
-    </div>
+                    // Add responsive adjustments
+                    function handleResize() {
+                        if (window.innerWidth < 768) {
+                            // Mobile adjustments
+                            document.querySelectorAll('.course-entry, .saved-course').forEach(entry => {
+                                entry.style.gridTemplateColumns = '1fr';
+                                entry.style.gap = '0.5rem';
+                            });
+                        } else {
+                            // Desktop adjustments
+                            document.querySelectorAll('.course-entry, .saved-course').forEach(entry => {
+                                entry.style.gridTemplateColumns = '2fr 1fr 1fr 1fr auto auto';
+                                entry.style.gap = '1rem';
+                            });
+                        }
+                    }
 
-    <script>
-    // Modal JavaScript
-    function loadProfileData() {
-        const firstName = localStorage.getItem('user_firstname') || 'First';
-        const lastName = localStorage.getItem('user_lastname') || 'Last';
-        const email = localStorage.getItem('user_email') || 'unknown@gmail.com';
-        const dob = localStorage.getItem('user_dob') || '';
-        const contact = localStorage.getItem('user_contact') || '';
-        const course = localStorage.getItem('user_course') || '';
-        const address = localStorage.getItem('user_address') || '';
-        const profilePhoto = localStorage.getItem('user_profile_photo') || './images/profile-1.jpg';
+                    window.addEventListener('resize', handleResize);
+                    handleResize(); // Initial call
 
-        document.getElementById('firstName').value = firstName;
-        document.getElementById('lastName').value = lastName;
-        document.getElementById('email').value = email;
-        document.getElementById('dob').value = dob;
-        document.getElementById('contact').value = contact;
-        document.getElementById('course').value = course;
-        document.getElementById('address').value = address;
-        document.getElementById('profilePreview').src = profilePhoto;
-    }
-    document.getElementById('openSettings').addEventListener('click', function(e) {
-        e.preventDefault();
-        loadProfileData();
-        document.getElementById('settingsModal').classList.add('active');
-    });
-    document.getElementById('closeSettings').addEventListener('click', function() {
-        document.getElementById('settingsModal').classList.remove('active');
-    });
-    document.querySelectorAll('.settings-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            const tabId = this.getAttribute('data-tab');
-            document.getElementById(tabId + '-tab').classList.add('active');
-        });
-    });
-    document.getElementById('photoUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                document.getElementById('profilePreview').src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    document.getElementById('photoUrl').addEventListener('change', function() {
-        const url = this.value.trim();
-        if (url) {
-            document.getElementById('profilePreview').src = url;
-        }
-    });
-    document.getElementById('profileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('email').value;
-        const dob = document.getElementById('dob').value;
-        const contact = document.getElementById('contact').value;
-        const course = document.getElementById('course').value;
-        const address = document.getElementById('address').value;
-        const profilePhoto = document.getElementById('profilePreview').src;
+                    // Add confirmation for course deletion
+                    const originalDeleteCourse = deleteCourse;
+                    deleteCourse = function(index) {
+                        if (confirm('Are you sure you want to delete this course?')) {
+                            originalDeleteCourse(index);
+                        }
+                    };
 
-        localStorage.setItem('user_firstname', firstName);
-        localStorage.setItem('user_lastname', lastName);
-        localStorage.setItem('user_email', email);
-        localStorage.setItem('user_dob', dob);
-        localStorage.setItem('user_contact', contact);
-        localStorage.setItem('user_course', course);
-        localStorage.setItem('user_address', address);
-        localStorage.setItem('user_profile_photo', profilePhoto);
+                    // Add keyboard shortcuts
+                    document.addEventListener('keydown', function(e) {
+                        if (e.ctrlKey && e.key === 'n') {
+                            e.preventDefault();
+                            addCourse();
+                        } else if (e.ctrlKey && e.key === 's') {
+                            e.preventDefault();
+                            saveCourses();
+                        }
+                    });
 
-        alert('Profile updated successfully!');
-    });
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const currentPass = document.getElementById('currentpass').value;
-        const newPass = document.getElementById('newpass').value;
-        const confirmPass = document.getElementById('confirmpass').value;
-        if (newPass !== confirmPass) {
-            alert("New passwords don't match!");
-            return;
-        }
-        if (newPass.length < 8) {
-            alert("Password must be at least 8 characters long!");
-            return;
-        }
-        alert('Password changed successfully!');
-        this.reset();
-    });
-    window.addEventListener('click', function(event) {
-        if (event.target === document.getElementById('settingsModal')) {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-    });
-    </script>
-   <script>
-    function addCourse() {
-        let courseContainer = document.getElementById("course-list");
-        let courseEntry = document.createElement("div");
-        courseEntry.classList.add("course-entry");
-        courseEntry.innerHTML = `
-            <input type="text" placeholder="Course Name" required>
-            <input type="number" placeholder="Prelim Grade" min="0" max="100" required>
-            <input type="number" placeholder="Midterm Grade" min="0" max="100" required>
-            <input type="number" placeholder="Final Grade" min="0" max="100" required>
-            <button class="remove-btn" onclick="removeCourse(this)">Remove</button>
-        `;
-        courseContainer.appendChild(courseEntry);
-    }
+                    // Add tooltips
+                    function addTooltip(element, text) {
+                        const tooltip = document.createElement('span');
+                        tooltip.className = 'tooltip';
+                        tooltip.textContent = text;
+                        tooltip.style.position = 'absolute';
+                        tooltip.style.backgroundColor = 'var(--color-dark)';
+                        tooltip.style.color = 'var(--color-white)';
+                        tooltip.style.padding = '0.3rem 0.6rem';
+                        tooltip.style.borderRadius = 'var(--border-radius-1)';
+                        tooltip.style.fontSize = '0.8rem';
+                        tooltip.style.whiteSpace = 'nowrap';
+                        tooltip.style.bottom = '100%';
+                        tooltip.style.left = '50%';
+                        tooltip.style.transform = 'translateX(-50%)';
+                        tooltip.style.marginBottom = '0.5rem';
+                        tooltip.style.opacity = '0';
+                        tooltip.style.transition = 'opacity 0.2s';
+                        tooltip.style.pointerEvents = 'none';
+                        tooltip.style.zIndex = '1000';
+                        
+                        element.style.position = 'relative';
+                        element.appendChild(tooltip);
+                        
+                        element.addEventListener('mouseenter', function() {
+                            tooltip.style.opacity = '1';
+                        });
+                        
+                        element.addEventListener('mouseleave', function() {
+                            tooltip.style.opacity = '0';
+                        });
+                    }
 
-    function removeCourse(button) {
-        button.parentElement.remove();
-    }
+                    // Add tooltips to buttons
+                    document.querySelectorAll('button').forEach(button => {
+                        if (button.textContent.includes('Add Course')) {
+                            addTooltip(button, 'Add a new course (Ctrl+N)');
+                        } else if (button.textContent.includes('Save Courses')) {
+                            addTooltip(button, 'Save all courses (Ctrl+S)');
+                        } else if (button.textContent.includes('Remove')) {
+                            addTooltip(button, 'Delete this course');
+                        } else if (button.textContent.includes('Update')) {
+                            addTooltip(button, 'Save changes to this course');
+                        }
+                    });
 
-    function saveCourses() {
-        let courses = [];
-        document.querySelectorAll(".course-entry").forEach(entry => {
-            let inputs = entry.getElementsByTagName("input");
-            let course = {
-                name: inputs[0].value,
-                prelim: inputs[1].value,
-                midterm: inputs[2].value,
-                final: inputs[3].value
-            };
-            courses.push(course);
-        });
-        localStorage.setItem("courses", JSON.stringify(courses));
-        displaySavedCourses();
-        alert("Courses saved successfully!");
-    }
+                    // Add loading animation
+                    function showLoading(show) {
+                        const loading = document.getElementById('loading');
+                        if (!loading && show) {
+                            const loadingDiv = document.createElement('div');
+                            loadingDiv.id = 'loading';
+                            loadingDiv.style.position = 'fixed';
+                            loadingDiv.style.top = '0';
+                            loadingDiv.style.left = '0';
+                            loadingDiv.style.width = '100%';
+                            loadingDiv.style.height = '100%';
+                            loadingDiv.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                            loadingDiv.style.display = 'flex';
+                            loadingDiv.style.justifyContent = 'center';
+                            loadingDiv.style.alignItems = 'center';
+                            loadingDiv.style.zIndex = '9999';
+                            
+                            const spinner = document.createElement('div');
+                            spinner.className = 'spinner';
+                            spinner.style.width = '50px';
+                            spinner.style.height = '50px';
+                            spinner.style.border = '5px solid var(--color-light)';
+                            spinner.style.borderTopColor = 'var(--color-primary)';
+                            spinner.style.borderRadius = '50%';
+                            spinner.style.animation = 'spin 1s linear infinite';
+                            
+                            loadingDiv.appendChild(spinner);
+                            document.body.appendChild(loadingDiv);
+                            
+                            // Add spin animation
+                            const style = document.createElement('style');
+                            style.textContent = `
+                                @keyframes spin {
+                                    0% { transform: rotate(0deg); }
+                                    100% { transform: rotate(360deg); }
+                                }
+                            `;
+                            document.head.appendChild(style);
+                        } else if (loading && !show) {
+                            loading.remove();
+                        }
+                    }
 
-    function displaySavedCourses() {
-        let savedCoursesContainer = document.getElementById("saved-courses-container");
-        let savedCoursesDiv = document.getElementById("saved-courses");
-        savedCoursesDiv.innerHTML = "";
-        
-        let courses = JSON.parse(localStorage.getItem("courses")) || [];
-        courses.forEach((course, index) => {
-            let courseDiv = document.createElement("div");
-            courseDiv.classList.add("saved-course");
-            courseDiv.innerHTML = `
-                <input type="text" value="${course.name}" onchange="updateCourse(${index}, 'name', this.value)">
-                <input type="number" value="${course.prelim}" min="0" max="100" onchange="updateCourse(${index}, 'prelim', this.value)">
-                <input type="number" value="${course.midterm}" min="0" max="100" onchange="updateCourse(${index}, 'midterm', this.value)">
-                <input type="number" value="${course.final}" min="0" max="100" onchange="updateCourse(${index}, 'final', this.value)">
-                <button class="update-btn" onclick="saveUpdatedCourses()">Update</button>
-                <button class="remove-btn" onclick="deleteCourse(${index})">Remove</button>
-            `;
-            savedCoursesDiv.appendChild(courseDiv);
-        });
-        savedCoursesContainer.style.display = courses.length > 0 ? "block" : "none";
-    }
+                    // Simulate loading for save operations
+                    const originalSaveCourses = saveCourses;
+                    saveCourses = function() {
+                        showLoading(true);
+                        setTimeout(() => {
+                            originalSaveCourses();
+                            showLoading(false);
+                        }, 1000);
+                    };
 
-    function deleteCourse(index) {
-        let courses = JSON.parse(localStorage.getItem("courses")) || [];
-        courses.splice(index, 1);
-        localStorage.setItem("courses", JSON.stringify(courses));
-        displaySavedCourses();
-    }
+                    const originalSaveUpdatedCourses = saveUpdatedCourses;
+                    saveUpdatedCourses = function() {
+                        showLoading(true);
+                        setTimeout(() => {
+                            originalSaveUpdatedCourses();
+                            showLoading(false);
+                        }, 1000);
+                    };
 
-    function updateCourse(index, field, value) {
-        let courses = JSON.parse(localStorage.getItem("courses")) || [];
-        courses[index][field] = value;
-        localStorage.setItem("courses", JSON.stringify(courses));
-    }
-
-    function saveUpdatedCourses() {
-        let courses = [];
-        document.querySelectorAll(".saved-course").forEach(entry => {
-            let inputs = entry.getElementsByTagName("input");
-            let course = {
-                name: inputs[0].value,
-                prelim: inputs[1].value,
-                midterm: inputs[2].value,
-                final: inputs[3].value
-            };
-            courses.push(course);
-        });
-        localStorage.setItem("courses", JSON.stringify(courses));
-        displaySavedCourses();
-        alert("Courses updated successfully!");
-    }
-
-    // Display saved courses on page load
-    window.onload = displaySavedCourses;
-    function saveCourses() {
-    let courses = [];
-        document.querySelectorAll(".course-entry").forEach(entry => {
-            let inputs = entry.getElementsByTagName("input");
-            let prelim = parseFloat(inputs[1].value) || 0;
-            let midterm = parseFloat(inputs[2].value) || 0;
-            let final = parseFloat(inputs[3].value) || 0;
-            let percentage = Math.round((prelim + midterm + final) / 3);
-        
-            let course = {
-            name: inputs[0].value,
-            prelim,
-            midterm,
-            final,
-            percentage
-        };
-        courses.push(course);
-    });
-        localStorage.setItem("courses", JSON.stringify(courses));
-        displaySavedCourses();
-        alert("Courses saved successfully!");
-}
-let percentage = Math.round((prelim + midterm + final) / 3);
-let courses = JSON.parse(localStorage.getItem("courses")) || [];
-
-courses.push({
-    name: courseName,
-    prelim: prelim,
-    midterm: midterm,
-    final: final,
-    percentage: percentage
-});
-
-localStorage.setItem("courses", JSON.stringify(courses));
-
-
-</script>
-
-</body>
-
-<script src="app.js"></script>
-
-</body>
-</html>
+                    // Initialize with one course entry
+                    if (JSON.parse(localStorage.getItem("courses")) === null || JSON.parse(localStorage.getItem("courses")).length === 0) {
+                        addCourse();
+                    }
+                </script>
+            </body>
+            </html>
